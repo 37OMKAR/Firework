@@ -13,3 +13,10 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 **Edge glow:** screen edges flare in each burst's colour on the side nearest the explosion, plus a neon frame; reactive / rainbow / static modes.
 
 **Keys:** Space random shell · 1–9 shell type · 0 random · G finale · T sky text · A auto · M mute · F fullscreen · H hide UI.
+
+## Rendering & performance
+- **Glow sprites:** sparks are drawn from pre-rendered glow sprites (white-hot core → colour → soft falloff) instead of per-frame gradients/arcs, with streak stamping for fast sparks.
+- **Cooling embers:** sparks start white-hot, settle to their colour, then warm hues cool toward orange-red.
+- **Bloom, smoke & flash:** low-res bloom pass, drifting smoke that is lit by later bursts, rocket comet tails, pistil cores in round shells.
+- **Cheap DOM:** the marquee is baked once to a canvas and scrolled with a GPU-only transform; edge glow only touches the DOM when a value changes (no blend modes, no per-frame box-shadow).
+- **Adaptive quality:** *Settings → Show → Quality* (Auto / High / Medium / Low). Auto watches frame time and scales particle cap, density, resolution, bloom and smoke up/down. Press **P** (or the setting) for a live FPS meter.
