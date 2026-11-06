@@ -1,15 +1,15 @@
-# Firework Studio
+# Diwali Fireworks 🪔
 
-A free, single-file virtual fireworks simulator. Open `index.html` in any modern browser — no build step.
+A free, single-file Diwali fireworks simulator. Open `index.html` in any modern browser — no build step.
 
-**Shells (21):** Peony, Chrysanthemum, Willow, Palm, Ring, Double ring, Heart, Star, Spiral, Saturn, Smiley, Butterfly, Flower, Crossette, Crackle, Strobe, Horsetail, Fountain, Roman candle, Sky text, Random.
+**Festive look:** Diwali night sky with a lit temple & palace skyline, a glowing row of flickering diyas, swaying lanterns, a rangoli start screen, "शुभ दीपावली" / "HAPPY DIWALI" marquee, saffron-gold-magenta "Diwali mix" colours. Large high-contrast UI (solid panels, big buttons) that works on phones.
 
-**Sound (all synthesized with Web Audio):** mortar thump + rising whistle, layered boom with reverb, stereo panning, realistic light-to-sound delay, crackle/fizz/sizzle, crowd ooh/aah/cheer and applause, three sound styles (Realistic, Arcade 8-bit, Crystal bells), optional generative ambient music, per-layer toggles and volume sliders.
+**Shells (25):** Peony, Chrysanthemum, Willow, Palm, Ring, Double ring, Heart, Star, Spiral, Saturn, Smiley, Butterfly, Flower, Crossette, Crackle, Strobe, Horsetail, **Diya flame**, **Anar (fountain)**, **Chakri (spinner)**, **Laddi (string of crackers)**, **Bomb**, Roman candle, Sky text, Random.
 
-**Marquee text:** scrolling neon ticker (Neon / Outline / LED dots / Retro 3D), custom text, font, size, speed, position, glow, solid / rainbow / follows-the-fireworks colour, pulses on every explosion. Plus **text fireworks** that spell any message in the sky.
+**Sound (all synthesized with Web Audio):** mortar thump + rising whistle, layered boom with reverb and stereo panning, realistic flash-to-bang delay, crackle/fizz, cracker bangs, chakri whirr, temple bells, **dhol drums** on the finale, crowd ooh/cheer/applause, **Diwali raga & tabla music** (or ambient pads), 3 sound styles, per-layer toggles and volume sliders.
 
-**Edge glow:** screen edges flare in each explosion's colour on the side nearest the burst, plus a neon frame border; reactive, rainbow-cycle or static modes.
+**Marquee text:** neon ticker on a banner (Neon / Outline / LED / Retro 3D), Diwali gold flow / rainbow / follows-fireworks / solid colours, pulses on every burst. **Text fireworks** write messages (including Devanagari) in the sky.
 
-**Also:** 13 colour palettes, auto show with volleys/fountains/candles/text, grand finale, gravity/wind/slow-mo, bloom, screen shake, themes (night/dusk/deep space/aurora), city/hills horizon, screenshot, fullscreen, hide-UI, settings saved locally.
+**Edge glow:** screen edges flare in each burst's colour on the side nearest the explosion, plus a neon frame; reactive / rainbow / static modes.
 
 **Keys:** Space random shell · 1–9 shell type · 0 random · G finale · T sky text · A auto · M mute · F fullscreen · H hide UI.

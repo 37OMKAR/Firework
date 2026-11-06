@@ -3,18 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<meta name="description" content="Free virtual fireworks simulator. Launch fireworks with a click, with realistic sound, marquee text, text fireworks and glowing screen edges.">
-<title>Firework Studio – Virtual Fireworks Simulator</title>
+<meta name="description" content="Free Diwali fireworks simulator. Light up the sky with anars, chakris, laddis and rockets, with festive sound, marquee text and glowing edges.">
+<title>Diwali Fireworks – Virtual Fireworks Simulator</title>
 <style>
 :root{
-  --glass:rgba(10,13,30,.72);--glass2:rgba(255,255,255,.07);--line:rgba(255,255,255,.14);
-  --acc:#ffb347;--acc2:#ff5f8d;--txt:#eef0ff;--dim:#9aa2c8;
-  --top:52px;--dockH:130px;
-  --mqc:#ff4fd8;--mqs:56px;--mqg:24;--pulse:0;
+  --glass:rgba(30,9,26,.96);--glass2:rgba(255,255,255,.1);--line:rgba(255,196,102,.55);
+  --acc:#ffb300;--acc2:#ff5f8d;--txt:#fff8ec;--dim:#f0dcba;
+  --top:60px;--dockH:150px;
+  --mqc:#ffa21f;--mqs:56px;--mqg:24;--pulse:0;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;background:#03040b;color:var(--txt);overflow:hidden;
-  font:14px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;user-select:none;-webkit-user-select:none}
+html,body{margin:0;height:100%;background:#07030f;color:var(--txt);overflow:hidden;
+  font:16px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;user-select:none;-webkit-user-select:none}
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #fx{touch-action:none;cursor:crosshair;z-index:2}
 #sky{z-index:1}#city{z-index:3;pointer-events:none}
@@ -29,11 +29,7 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #frame{position:absolute;inset:0;border:2px solid transparent;border-radius:0}
 
 /* ---------- marquee ---------- */
-#mq{position:fixed;left:0;right:0;z-index:6;overflow:hidden;pointer-events:none;white-space:nowrap;
-  top:calc(var(--top) + 6px);line-height:1.25}
-#mq.pos-middle{top:42%}
-#mq.pos-bottom{top:auto;bottom:calc(var(--dockH) + 6px)}
-#mq[hidden]{display:none}
+#mq{white-space:nowrap;line-height:1.25;padding:2px 0}
 #mq .track{display:inline-flex;will-change:transform;animation:mq var(--dur,20s) linear infinite}
 #mq{filter:drop-shadow(0 0 calc((var(--mqg)*1px)*(1 + var(--pulse)*1.4)) var(--mqc))
          drop-shadow(0 0 calc((var(--mqg)*.3px)*(1 + var(--pulse))) var(--mqc))}
@@ -45,72 +41,105 @@ canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #mq.st-retro .half{color:#fff;text-shadow:3px 3px 0 var(--mqc),6px 6px 0 rgba(0,0,0,.5);font-style:italic}
 #mq.cm-rainbow .half{color:transparent;background:linear-gradient(90deg,#ff3b3b,#ffb300,#ffee00,#27e06b,#2fd0ff,#6a5cff,#ff4fd8,#ff3b3b) 0 0/400px 100%;
   -webkit-background-clip:text;background-clip:text;animation:rb 5s linear infinite}
-#mq.cm-rainbow.st-outline .half{background:none;-webkit-text-stroke:2px #ff4fd8}
+#mq.cm-festive .half{color:transparent;background:linear-gradient(90deg,#fff3b0,#ffc83a,#ff8a1f,#ff4f6e,#ffc83a,#fff3b0) 0 0/420px 100%;
+  -webkit-background-clip:text;background-clip:text;animation:rb 4s linear infinite}
+#mq.cm-rainbow.st-outline .half,#mq.cm-festive.st-outline .half{background:none;-webkit-text-stroke:2px var(--mqc)}
 @keyframes rb{to{background-position:400px 0}}
 
 /* ---------- UI ---------- */
 #top{position:fixed;left:0;right:0;top:0;height:var(--top);z-index:10;display:flex;align-items:center;gap:8px;
-  padding:0 12px;padding-top:env(safe-area-inset-top);background:linear-gradient(to bottom,rgba(3,4,11,.85),transparent);pointer-events:none}
+  padding:0 12px;padding-top:env(safe-area-inset-top);background:linear-gradient(to bottom,rgba(20,4,16,.95),rgba(20,4,16,.7) 70%,transparent);pointer-events:none}
 #top>*{pointer-events:auto}
-#brand{font-weight:800;letter-spacing:.02em;font-size:17px;margin-right:auto;pointer-events:none;white-space:nowrap}
-#brand .nm{background:linear-gradient(90deg,#ffd36b,#ff5f8d,#8f7bff);-webkit-background-clip:text;background-clip:text;color:transparent}
-#brand small{font-weight:500;font-size:12px;color:var(--dim);margin-left:8px}
-.btn{appearance:none;border:1px solid var(--line);background:var(--glass);color:var(--txt);border-radius:10px;
-  padding:7px 11px;font:inherit;cursor:pointer;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);white-space:nowrap}
-.btn:hover{background:rgba(255,255,255,.14)}
-.btn.on{border-color:var(--acc);box-shadow:0 0 12px rgba(255,179,71,.45);color:#fff}
-.btn.hot{background:linear-gradient(135deg,#ff7a3d,#ff3d8d);border-color:transparent;font-weight:700}
+#brand{font-weight:800;letter-spacing:.02em;font-size:22px;margin-right:auto;pointer-events:none;white-space:nowrap}
+#brand .nm{background:linear-gradient(90deg,#ffe082,#ffb300,#ff6f3c);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 8px rgba(255,160,30,.55))}
+#brand small{font-weight:600;font-size:14px;color:var(--dim);margin-left:10px}
+.btn{appearance:none;border:1.5px solid var(--line);background:var(--glass);color:var(--txt);border-radius:12px;
+  padding:9px 14px;font:inherit;font-weight:700;cursor:pointer;white-space:nowrap;text-shadow:0 1px 2px #000}
+.btn:hover{background:#4a1738}
+.btn.on{border-color:#ffd54f;background:#5a2410;box-shadow:0 0 14px rgba(255,179,71,.6);color:#fff}
+.btn.hot{background:linear-gradient(135deg,#ff9a1f,#ff3d6e);border-color:#ffd54f;font-weight:800;color:#fff}
 body.hideui #top>:not(#showUI),body.hideui #dock,body.hideui #panel{display:none!important}
 body.hideui{--top:0px;--dockH:0px}
 #showUI{display:none;position:fixed;right:10px;top:10px}
 body.hideui #showUI{display:inline-block;opacity:.35}
 body.hideui #showUI:hover{opacity:1}
 
-#dock{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:8px 10px calc(8px + env(safe-area-inset-bottom));
-  background:linear-gradient(to top,rgba(3,4,11,.92),rgba(3,4,11,.55) 70%,transparent);display:flex;flex-direction:column;gap:7px}
+#dock{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:10px 12px calc(10px + env(safe-area-inset-bottom));
+  background:linear-gradient(to top,rgba(18,4,14,.98),rgba(18,4,14,.93) 75%,rgba(18,4,14,.6));border-top:1.5px solid var(--line);display:flex;flex-direction:column;gap:9px}
 .row{display:flex;gap:6px;align-items:center;overflow-x:auto;scrollbar-width:none;padding:2px}
 .row::-webkit-scrollbar{display:none}
-.chip{flex:0 0 auto;appearance:none;border:1px solid var(--line);background:var(--glass);color:var(--txt);border-radius:999px;
-  padding:6px 12px;font:inherit;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
-.chip.on{background:linear-gradient(135deg,rgba(255,179,71,.35),rgba(255,95,141,.35));border-color:var(--acc);color:#fff}
-.sw{flex:0 0 auto;width:26px;height:26px;border-radius:50%;border:2px solid rgba(255,255,255,.25);cursor:pointer;padding:0}
-.sw.on{border-color:#fff;box-shadow:0 0 0 2px rgba(255,255,255,.25),0 0 14px currentColor;transform:scale(1.12)}
-.sep{flex:0 0 1px;align-self:stretch;background:var(--line);margin:0 4px}
+.chip{flex:0 0 auto;appearance:none;border:1.5px solid rgba(255,196,102,.4);background:#3a1230;color:#fff;border-radius:999px;
+  padding:9px 16px;font:inherit;font-size:16px;font-weight:700;cursor:pointer;text-shadow:0 1px 2px #000}
+.chip:hover{background:#561c44}
+.chip.on{background:linear-gradient(135deg,#ff9a1f,#e8335f);border-color:#ffe082;color:#fff;box-shadow:0 0 14px rgba(255,160,40,.65)}
+.sw{flex:0 0 auto;width:32px;height:32px;border-radius:50%;border:2.5px solid rgba(255,255,255,.5);cursor:pointer;padding:0}
+.sw.on{border-color:#fff;box-shadow:0 0 0 3px rgba(255,200,100,.6),0 0 14px currentColor;transform:scale(1.15)}
+.sep{flex:0 0 1.5px;align-self:stretch;background:var(--line);margin:0 6px}
 
-#panel{position:fixed;right:10px;top:calc(var(--top) + 4px);bottom:calc(var(--dockH) + 8px);width:min(340px,calc(100vw - 20px));z-index:11;
-  background:var(--glass);border:1px solid var(--line);border-radius:16px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+#panel{position:fixed;right:10px;top:calc(var(--top) + 4px);bottom:calc(var(--dockH) + 8px);width:min(380px,calc(100vw - 20px));z-index:11;
+  background:#1c0818;border:2px solid var(--line);border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,.7);
   display:none;flex-direction:column;overflow:hidden}
 #panel.open{display:flex}
-#tabs{display:flex;gap:2px;padding:8px 8px 0;border-bottom:1px solid var(--line)}
-#tabs button{flex:1;appearance:none;border:0;background:none;color:var(--dim);padding:8px 2px;font:inherit;cursor:pointer;border-bottom:2px solid transparent}
-#tabs button.on{color:#fff;border-color:var(--acc)}
+#tabs{display:flex;gap:2px;padding:8px 8px 0;border-bottom:1.5px solid var(--line);background:#2a0d22}
+#tabs button{flex:1;appearance:none;border:0;background:none;color:var(--dim);padding:11px 2px;font:inherit;font-weight:700;cursor:pointer;border-bottom:3px solid transparent}
+#tabs button.on{color:#fff;border-color:#ffb300;background:rgba(255,179,0,.12)}
 #tabBody{overflow-y:auto;padding:10px 14px 14px;flex:1;user-select:none}
 .f{display:flex;align-items:center;gap:10px;margin:9px 0;justify-content:space-between}
-.f label{color:var(--txt);flex:1}
-.f input[type=range]{width:140px;accent-color:var(--acc)}
-.f input[type=text],.f select{width:160px;background:rgba(255,255,255,.08);color:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit}
+.f label{color:#fff;flex:1;font-weight:600}
+.f input[type=range]{width:150px;height:26px;accent-color:#ffb300}
+.f input[type=text],.f select{width:170px;background:#3a1230;color:#fff;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;font-weight:600}
 .f select option{color:#000}
 .f input[type=color]{width:44px;height:28px;border:1px solid var(--line);border-radius:6px;background:none;padding:0}
-.f input[type=checkbox]{width:20px;height:20px;accent-color:var(--acc)}
+.f input[type=checkbox]{width:24px;height:24px;accent-color:#ffb300}
 .f.wide{flex-direction:column;align-items:stretch}.f.wide input[type=text]{width:100%}
-.h{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--dim);margin:16px 0 4px}
-.note{font-size:12px;color:var(--dim)}
+.h{font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:#ffcc66;margin:20px 0 6px;padding-bottom:4px;border-bottom:1px solid rgba(255,196,102,.3)}
+.note{font-size:14px;color:var(--dim)}
 
 #start{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
-  background:radial-gradient(ellipse at 50% 60%,rgba(40,20,70,.55),rgba(3,4,11,.88) 70%);text-align:center;padding:20px;transition:opacity .6s}
+  background:radial-gradient(ellipse at 50% 55%,rgba(110,38,22,.97),rgba(14,3,18,.99) 75%);text-align:center;padding:20px;transition:opacity .6s;overflow:auto}
 #start.gone{opacity:0;pointer-events:none}
-#start h1{margin:0;font-size:clamp(34px,8vw,72px);letter-spacing:.02em;
-  background:linear-gradient(90deg,#ffd36b,#ff5f8d,#8f7bff,#2fd0ff);-webkit-background-clip:text;background-clip:text;color:transparent;
-  filter:drop-shadow(0 0 22px rgba(255,95,141,.5))}
-#start p{margin:0;color:var(--dim);max-width:520px;font-size:16px}
+#start h1{margin:0;font-size:clamp(38px,9vw,84px);letter-spacing:.02em;line-height:1.05;
+  background:linear-gradient(90deg,#ffe082,#ffb300,#ff6f3c,#ffe082);-webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 0 22px rgba(255,150,30,.65))}
+#start h2{margin:0;font-size:clamp(22px,5vw,38px);color:#ffe9b8;text-shadow:0 0 16px rgba(255,160,40,.8)}
+#start p{margin:0;color:#fff2d8;max-width:560px;font-size:17px}
+.rangoli{position:relative;width:min(250px,48vw);aspect-ratio:1;display:grid;place-items:center;font-size:54px}
+.rangoli::before{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-conic-gradient(#ff9a1f 0 9deg,#e8335f 9deg 18deg,#ffd54f 18deg 27deg,#7a2cff 27deg 36deg);
+  -webkit-mask:radial-gradient(circle,transparent 16%,#000 17% 23%,transparent 24% 36%,#000 37% 50%,transparent 51% 60%,#000 61% 70%,transparent 71%);
+  mask:radial-gradient(circle,transparent 16%,#000 17% 23%,transparent 24% 36%,#000 37% 50%,transparent 51% 60%,#000 61% 70%,transparent 71%);
+  animation:spin 50s linear infinite;filter:drop-shadow(0 0 18px rgba(255,150,30,.7))}
+@keyframes spin{to{transform:rotate(360deg)}}
 #start .big{font-size:18px;padding:14px 26px;border-radius:14px}
-#toast{position:fixed;left:50%;top:calc(var(--top) + 8px);transform:translateX(-50%);z-index:30;background:var(--glass);
-  border:1px solid var(--line);border-radius:999px;padding:6px 14px;opacity:0;transition:opacity .25s;pointer-events:none}
+#toast{position:fixed;left:50%;top:calc(var(--top) + 90px);transform:translateX(-50%);z-index:30;background:#3a1230;font-weight:700;font-size:17px;
+  border:2px solid #ffd54f;border-radius:999px;padding:8px 20px;opacity:0;transition:opacity .25s;pointer-events:none}
 #toast.show{opacity:1}
 @media (max-width:640px){
-  #brand small,#brand .nm{display:none}#brand{font-size:22px}.btn{padding:7px 9px}#top{gap:6px}
-  #panel{left:10px;right:10px;width:auto}
+  #brand small,#brand .nm{display:none}#brand{font-size:26px}.btn{padding:9px 10px}#top{gap:6px}
+  #panel{left:10px;right:10px;width:auto}.lantern{display:none}
+  #bar{flex-wrap:wrap;overflow:visible}#pals{width:100%;overflow-x:auto!important;padding:2px 0!important}#bar .sep{display:none}#bar .btn{padding:8px 10px;font-size:14px}.chip{font-size:15px;padding:8px 13px}
+  .f input[type=range]{width:120px}.f input[type=text],.f select{width:140px}
 }
+
+/* ---------- Diwali decorations ---------- */
+#diyas{position:fixed;left:0;right:0;bottom:var(--dockH);height:46px;display:flex;justify-content:space-around;align-items:flex-end;z-index:3;pointer-events:none;padding:0 6px}
+.diya{position:relative;width:36px;height:15px;background:linear-gradient(#f0883a,#9a3b12);border-radius:3px 3px 36px 36px/3px 3px 15px 15px;box-shadow:0 0 16px rgba(255,160,40,.7),inset 0 2px 0 rgba(255,220,150,.6)}
+.diya::before{content:"";position:absolute;left:50%;bottom:11px;width:10px;height:21px;margin-left:-5px;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;
+  background:radial-gradient(ellipse at 50% 72%,#fffbe0 0 18%,#ffc83a 45%,#ff6a00 85%,transparent);transform-origin:50% 100%;
+  box-shadow:0 0 20px 8px rgba(255,170,40,.6);animation:flick .18s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+@keyframes flick{from{transform:scale(1,.88) rotate(-4deg)}to{transform:scale(.88,1.12) rotate(4deg)}}
+.lantern{position:fixed;top:var(--top);z-index:7;width:46px;pointer-events:none;transform-origin:50% 0;animation:sway 3.6s ease-in-out infinite alternate;animation-delay:var(--d,0s)}
+.lantern::before{content:"";display:block;width:2px;height:var(--len,28px);background:#ffd54f;margin:0 auto}
+.lantern i{display:block;height:62px;border-radius:14px 14px 22px 22px/10px 10px 26px 26px;border:2px solid #ffd54f;
+  background:repeating-linear-gradient(90deg,#ff6a1a 0 8px,#ffb02e 8px 10px,#e8335f 10px 18px,#ffb02e 18px 20px);
+  box-shadow:0 0 24px 8px rgba(255,140,30,.65),inset 0 0 14px rgba(255,240,170,.8)}
+.lantern::after{content:"";display:block;width:2px;height:12px;margin:0 auto;background:#ffd54f;box-shadow:0 8px 0 3px #ffb02e}
+@keyframes sway{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+#mqw{position:fixed;left:0;right:0;z-index:6;pointer-events:none;overflow:hidden;top:calc(var(--top) + 6px);
+  background:linear-gradient(rgba(25,4,20,.78),rgba(25,4,20,.78));border-top:2px solid rgba(255,196,102,.7);border-bottom:2px solid rgba(255,196,102,.7)}
+#mqw.pos-middle{top:42%}
+#mqw.pos-bottom{top:auto;bottom:calc(var(--dockH) + 52px)}
+#mqw[hidden]{display:none}
 </style>
 </head>
 <body>
@@ -122,10 +151,12 @@ body.hideui #showUI:hover{opacity:1}
   <i class="eg l"></i><i class="eg r"></i><i class="eg t"></i><i class="eg b"></i><i id="frame"></i>
 </div>
 
-<div id="mq" hidden><div class="track"></div></div>
+<div id="mqw" hidden><div id="mq"><div class="track"></div></div></div>
+<div id="lanterns"></div>
+<div id="diyas"></div>
 
 <div id="top">
-  <div id="brand"><span class="logo">🎆</span> <span class="nm">Firework Studio</span><small>tap the sky to launch</small></div>
+  <div id="brand"><span class="logo">🪔</span> <span class="nm">Diwali Fireworks</span><small>शुभ दीपावली · tap the sky</small></div>
   <button class="btn" id="bSettings" title="Settings">⚙ Settings</button>
   <button class="btn" id="bMute" title="Mute (M)">🔊</button>
   <button class="btn" id="bShot" title="Screenshot">📷</button>
@@ -152,11 +183,13 @@ body.hideui #showUI:hover{opacity:1}
 <div id="toast"></div>
 
 <div id="start">
-  <h1>Firework Studio</h1>
-  <p>A free virtual fireworks simulator – 20+ shell types, synthesized sound, neon marquee text, text fireworks and reactive edge glow.</p>
+  <div class="rangoli">🪔</div>
+  <h1>Happy Diwali</h1>
+  <h2>शुभ दीपावली</h2>
+  <p>Light up the festival sky – anars, chakris, laddis, rockets and sky-writing, with dhol, temple bells and the crackle of crackers.</p>
   <button class="btn hot big" id="goSound">🔊 Start with sound</button>
-  <button class="btn" id="goMute">Start muted</button>
-  <p style="font-size:13px">Tip: click or hold on the sky · Space = random shell · 1–9 = shell type · G = finale · H = hide UI</p>
+  <button class="btn big" id="goMute">Start muted</button>
+  <p style="font-size:15px">Tap or hold on the sky · Space = random shell · 1–9 = shell type · G = finale · H = hide UI</p>
 </div>
 
 <script>
@@ -168,24 +201,24 @@ body.hideui #showUI:hover{opacity:1}
 const $=s=>document.querySelector(s);
 const rnd=(a,b)=>a+Math.random()*(b-a), pick=a=>a[Math.random()*a.length|0];
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const FONTS=[['Impact, Haettenschweiler, "Arial Black", sans-serif','Impact'],['system-ui, sans-serif','Clean'],
+const FONTS=[['Impact, Haettenschweiler, "Arial Black", "Noto Sans Devanagari", sans-serif','Impact'],['system-ui, "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif','Clean'],
   ['Georgia, serif','Serif'],['"Courier New", monospace','Mono'],['"Brush Script MT", "Segoe Script", cursive','Script'],
   ['"Comic Sans MS", "Chalkboard SE", sans-serif','Playful']];
 const DEFAULTS={
-  type:'random',pal:'auto',
+  type:'random',pal:'diwali',
   autoShow:true,autoRate:1,volley:true,density:1,size:1,gravity:1,wind:0,speed:1,trail:5,
   bloom:true,shake:true,flash:true,sparkleTrail:true,
-  sound:true,vol:.8,sfxVol:.9,musicVol:.5,soundStyle:'real',whistle:true,boom:true,crackle:true,thump:true,crowd:true,music:false,realDelay:true,
-  mq:true,mqText:'HAPPY NEW YEAR ✦ MAKE A WISH ✦ FIREWORKS FOR EVERYONE',mqSpeed:140,mqSize:56,mqFont:FONTS[0][0],
-  mqStyle:'neon',mqColorMode:'burst',mqColor:'#ff4fd8',mqGlow:24,mqPos:'top',mqPulse:true,
-  skyText:'WOW!',skyFont:FONTS[0][0],skyAuto:true,
-  edge:true,edgeMode:'reactive',edgeInt:1,edgeW:180,edgeColor:'#4fc3ff',frame:true,
-  stars:true,skyline:'city',moon:true,theme:'night'
+  sound:true,vol:.8,sfxVol:.9,musicVol:.5,soundStyle:'real',whistle:true,boom:true,crackle:true,thump:true,crowd:true,music:true,musicStyle:'diwali',realDelay:true,dhol:true,
+  mq:true,mqText:'शुभ दीपावली ✦ HAPPY DIWALI ✦ MAY THE FESTIVAL OF LIGHTS BRIGHTEN YOUR LIFE ✦ 🪔',mqSpeed:130,mqSize:50,mqFont:FONTS[1][0],
+  mqStyle:'neon',mqColorMode:'festive',mqColor:'#ffb300',mqGlow:20,mqPos:'top',mqPulse:true,
+  skyText:'HAPPY DIWALI',skyFont:FONTS[0][0],skyAuto:true,
+  edge:true,edgeMode:'reactive',edgeInt:1,edgeW:180,edgeColor:'#ffa21f',frame:true,
+  stars:true,skyline:'palace',moon:false,theme:'diwali',lanterns:true,diyas:true
 };
 const S=Object.assign({},DEFAULTS);
-try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v1')||'{}'))}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v2')||'{}'))}catch(e){}
 let saveT=0;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v1',JSON.stringify(S))}catch(e){}},250)}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v2',JSON.stringify(S))}catch(e){}},250)}
 
 /* =====================================================================
    canvas setup
@@ -198,11 +231,14 @@ function resize(){
   for(const c of [sky,fxc,cityc]){c.width=W*DPR;c.height=H*DPR}
   ctx.setTransform(DPR,0,0,DPR,0,0);
   drawScene();
-  const d=$('#dock');document.documentElement.style.setProperty('--dockH',(document.body.classList.contains('hideui')?0:d.offsetHeight)+'px');
+  buildDeco();setDockH();
 }
+function setDockH(){const d=$('#dock');document.documentElement.style.setProperty('--dockH',(document.body.classList.contains('hideui')?0:d.offsetHeight)+'px')}
+if(window.ResizeObserver)new ResizeObserver(setDockH).observe($('#dock'));
+addEventListener('load',setDockH);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(setDockH);
 
 /* ---------- scene: sky, stars, moon, skyline ---------- */
-const THEMES={night:['#010208','#0a1030','#1a2250'],dusk:['#0a0520','#3a1a55','#b2476a'],void:['#000000','#05030c','#120a22'],aurora:['#010a0c','#05222a','#0e5a55']};
+const THEMES={diwali:['#06021a','#2b0f3f','#9a3a24'],night:['#010208','#0a1030','#1a2250'],dusk:['#0a0520','#3a1a55','#b2476a'],void:['#000000','#05030c','#120a22'],aurora:['#010a0c','#05222a','#0e5a55']};
 let starList=[];
 function drawScene(){
   const sc=sky.getContext('2d');sc.setTransform(DPR,0,0,DPR,0,0);sc.clearRect(0,0,W,H);
@@ -224,7 +260,34 @@ function drawScene(){
     for(const [a,b,c] of [[-.3,-.2,.22],[.25,.15,.3],[-.1,.4,.15],[.35,-.35,.14]]){sc.beginPath();sc.arc(mx+a*r,my+b*r,c*r,0,7);sc.fill()}
   }
   const cc=cityc.getContext('2d');cc.setTransform(DPR,0,0,DPR,0,0);cc.clearRect(0,0,W,H);
-  if(S.skyline==='city'){
+  if(S.skyline==='palace'){
+    const bs=Math.max(.6,Math.min(W/1100,H/650)),dark='#0b0212';let seed=11;const rr=()=>(seed=(seed*16807)%2147483647)/2147483647;
+    const glowG=cc.createLinearGradient(0,H-H*.3,0,H);glowG.addColorStop(0,'rgba(255,120,30,0)');glowG.addColorStop(1,'rgba(255,130,40,.38)');cc.fillStyle=glowG;cc.fillRect(0,H*.7,W,H*.3);
+    const bulbs=(x1,y1,x2,y2,n)=>{for(let i=0;i<=n;i++){const f=i/n,bx=x1+(x2-x1)*f,by=y1+(y2-y1)*f;cc.fillStyle=['#ffd54f','#ff7a3d','#ff5f8d','#fff3b0'][i%4];cc.beginPath();cc.arc(bx,by,2.2*bs,0,7);cc.fill();
+      cc.fillStyle='rgba(255,190,80,.22)';cc.beginPath();cc.arc(bx,by,6*bs,0,7);cc.fill()}};
+    const arch=(x,y,w,h)=>{cc.fillStyle='rgba(255,176,60,.9)';cc.beginPath();cc.moveTo(x,y+h);cc.lineTo(x,y+w/2);cc.arc(x+w/2,y+w/2,w/2,Math.PI,0);cc.lineTo(x+w,y+h);cc.fill()};
+    const dome=(cx,by,r,hh)=>{cc.fillStyle=dark;cc.beginPath();cc.ellipse(cx,by,r,hh,0,Math.PI,0);cc.fill();cc.fillRect(cx-r*.18,by-hh-r*.5,r*.36,r*.5);
+      cc.beginPath();cc.arc(cx,by-hh-r*.5,r*.2,0,7);cc.fill();cc.fillRect(cx-1.2,by-hh-r*.5-r*.55,2.4,r*.55);
+      cc.fillStyle='rgba(255,170,70,.22)';cc.fillRect(cx-r,by-2,r*2,2);bulbs(cx-r,by-1,cx+r,by-1,Math.round(r/(9*bs)))};
+    let x=-20;
+    while(x<W){
+      const bw=(70+rr()*90)*bs,bh=(H*.07+rr()*H*.11),kind=rr();
+      cc.fillStyle=dark;cc.fillRect(x,H-bh,bw,bh);cc.fillStyle='rgba(255,150,60,.18)';cc.fillRect(x,H-bh,bw,2);
+      for(let wy=H-bh+12*bs;wy<H-30*bs;wy+=30*bs)for(let wx=x+10*bs;wx<x+bw-16*bs;wx+=24*bs)if(rr()>.35)arch(wx,wy,12*bs,18*bs);
+      if(kind<.5)dome(x+bw/2,H-bh,bw*.36,bw*.3);
+      else if(kind<.8){for(const f of [.2,.8])dome(x+bw*f,H-bh,bw*.12,bw*.12)}
+      else bulbs(x,H-bh,x+bw,H-bh,Math.round(bw/(10*bs)));
+      x+=bw+rr()*8;
+    }
+    // grand temple in the centre
+    const cx=W/2,tw=190*bs,ty=H;let w=tw,y=ty;cc.fillStyle=dark;
+    for(let i=0;i<6;i++){const h=(i===0?70:34)*bs;cc.fillRect(cx-w/2,y-h,w,h);cc.fillStyle='rgba(255,150,60,.22)';cc.fillRect(cx-w/2,y-h,w,2);cc.fillStyle=dark;y-=h;w*=.8}
+    cc.beginPath();cc.moveTo(cx-w/2,y);cc.quadraticCurveTo(cx-w*.45,y-70*bs,cx,y-95*bs);cc.quadraticCurveTo(cx+w*.45,y-70*bs,cx+w/2,y);cc.fill();
+    cc.fillRect(cx-1.5,y-95*bs-26*bs,3,26*bs);cc.fillStyle='#ffb300';cc.beginPath();cc.arc(cx,y-95*bs-28*bs,4*bs,0,7);cc.fill();
+    cc.fillStyle=dark;
+    arch(cx-14*bs,H-62*bs,28*bs,52*bs);
+    for(let i=1;i<6;i++){const ww=tw*Math.pow(.8,i);bulbs(cx-ww/2,H-70*bs-(i-1)*34*bs,cx+ww/2,H-70*bs-(i-1)*34*bs,Math.round(ww/(12*bs)))}
+  }else if(S.skyline==='city'){
     let x=-10;const base=H;let seed=7;const rr=()=>(seed=(seed*16807)%2147483647)/2147483647;
     while(x<W){
       const bw=(26+rr()*60)*SC,bh=(H*.06+rr()*H*.2)*(.6+.5*Math.sin(x/W*6)**2);
@@ -361,6 +424,37 @@ const Snd={
     if(!this.ok('crackle'))return;const ac=this.ac,t=ac.currentTime+delay+.01,n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();
     f.type='highpass';f.frequency.value=5200;this.env(g,t,.15,.07,dur);n.connect(f);f.connect(g);g.connect(this.bus(pan,.2));n.start(t);n.stop(t+dur+.3);this.track(n);
   },
+  /* sharp cracker bang (laddi / bomb) */
+  bang(pan,delay,loud=1){
+    if(!this.ok('boom'))return;const ac=this.ac,t=ac.currentTime+delay+.005,b=this.bus(pan,.3);
+    const n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='highpass';f.frequency.value=700;
+    this.env(g,t,.001,.45*loud,.12+loud*.12);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+.5);this.track(n);
+    this.osc('sine',180,50,t,.18+loud*.12,.5*loud,b,.001);
+  },
+  /* temple bell: inharmonic partials with long ring */
+  bell(vol=1,delay=0){
+    if(!this.ok())return;const ac=this.ac,t=ac.currentTime+delay+.01,b=this.bus(rnd(-.4,.4),.7),f0=pick([392,440,523.25]);
+    for(const [m,v,d] of [[.5,.12,3.4],[1,.22,3],[1.19,.1,2.4],[1.56,.1,2],[2.0,.12,1.6],[2.51,.06,1.1],[3.2,.04,.8]])this.osc('sine',f0*m,f0*m,t,d,v*vol,b,.002);
+  },
+  /* dhol: pair of drum hits, accelerating pattern */
+  dhol(){
+    if(!this.ok())return;const ac=this.ac;let t=ac.currentTime+.05,gap=.34;
+    for(let i=0;i<22;i++){
+      const dagga=i%4!==3,b=this.bus(0,.25);
+      if(dagga){this.osc('sine',150,55,t,.28,.8,b,.001)}
+      else{const n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='bandpass';f.frequency.value=2400;f.Q.value=1.2;this.env(g,t,.001,.35,.07);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+.2);this.track(n);this.osc('triangle',320,220,t,.1,.25,b,.001)}
+      if(i%2===1)this.osc('sine',140,60,t+gap*.5,.2,.5,b,.001);
+      t+=gap;gap=Math.max(.11,gap*.93);
+    }
+  },
+  /* chakri spinner whirr */
+  whirr(pan,dur){
+    if(!this.ok('crackle'))return;const ac=this.ac,t=ac.currentTime+.01,n=this.noise(),bp=ac.createBiquadFilter(),g=ac.createGain(),lfo=ac.createOscillator(),lg=ac.createGain();
+    bp.type='bandpass';bp.Q.value=2.5;bp.frequency.setValueAtTime(900,t);bp.frequency.linearRampToValueAtTime(2600,t+dur);
+    lfo.frequency.setValueAtTime(8,t);lfo.frequency.linearRampToValueAtTime(26,t+dur);lg.gain.value=.5;g.gain.value=.5;lfo.connect(lg);lg.connect(g.gain);
+    const e=ac.createGain();this.env(e,t,.1,.35,dur);n.connect(bp);bp.connect(g);g.connect(e);e.connect(this.bus(pan,.2));n.start(t);n.stop(t+dur+.3);lfo.start(t);lfo.stop(t+dur+.3);this.track(n);this.track(lfo);
+    this.fizz(pan,0,dur);
+  },
   /* crowd: 'ooh' swell, 'cheer', 'clap' */
   crowd(kind){
     if(!this.ok('crowd'))return;const ac=this.ac,t=ac.currentTime+.01,b=this.bus(0,.5);
@@ -374,6 +468,28 @@ const Snd={
   },
   /* generative ambient music: pad + plucked arpeggio, lookahead scheduled */
   CH:[[220,261.63,329.63],[174.61,220,261.63],[261.63,329.63,392],[196,246.94,293.66]],
+  mdiwali(step,t){
+    const ac=this.ac,o=this.musicG,sa=261.63;
+    if(step%16===0){ // tanpura-like drone: Sa, Pa, Sa'
+      for(const [m,d] of [[.5,0],[.75,.5],[1,1.1],[.5,1.6]]){
+        const os=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();os.type='sawtooth';os.frequency.value=sa*m;os.detune.value=rnd(-5,5);f.type='lowpass';f.frequency.value=900;
+        g.gain.setValueAtTime(.0001,t+d);g.gain.linearRampToValueAtTime(.05,t+d+.05);g.gain.exponentialRampToValueAtTime(.0001,t+d+3.2);os.connect(f);f.connect(g);g.connect(o);os.start(t+d);os.stop(t+d+3.4);
+      }
+    }
+    // tabla-like pulse
+    if(step%4===0){const o2=ac.createOscillator(),g=ac.createGain();o2.type='sine';o2.frequency.setValueAtTime(130,t);o2.frequency.exponentialRampToValueAtTime(75,t+.15);g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.16,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.3);o2.connect(g);g.connect(o);o2.start(t);o2.stop(t+.35)}
+    else if(step%4===2||step%8===5){const n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='bandpass';f.frequency.value=3200;f.Q.value=2;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.09,t+.002);g.gain.exponentialRampToValueAtTime(.0001,t+.06);n.connect(f);f.connect(g);g.connect(o);n.start(t);n.stop(t+.1)}
+    // sitar-ish pluck: random walk in raga Bhoopali
+    this.ri=this.ri===undefined?2:this.ri;this.ri=clamp(this.ri+pick([-2,-1,-1,0,1,1,2]),0,8);
+    if(Math.random()<.78){
+      const fr=sa*this.RAGA[this.ri],os=ac.createOscillator(),os2=ac.createOscillator(),g=ac.createGain(),f=ac.createBiquadFilter();
+      os.type='sawtooth';os2.type='triangle';os.frequency.setValueAtTime(fr*1.02,t);os.frequency.exponentialRampToValueAtTime(fr,t+.06);os2.frequency.value=fr*2;
+      f.type='lowpass';f.frequency.setValueAtTime(3200,t);f.frequency.exponentialRampToValueAtTime(600,t+.5);
+      g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.09,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+.8);
+      os.connect(f);os2.connect(f);f.connect(g);g.connect(o);os.start(t);os2.start(t);os.stop(t+.9);os2.stop(t+.9);
+    }
+    if(step%32===16){const f0=sa*2;for(const [m,v,d] of [[1,.08,2.2],[2.4,.04,1.4]]){const os=ac.createOscillator(),g=ac.createGain();os.frequency.value=f0*m;g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(v,t+.004);g.gain.exponentialRampToValueAtTime(.0001,t+d);os.connect(g);g.connect(o);os.start(t);os.stop(t+d+.1)}}
+  },
   startMusic(){
     if(!this.ac||this.mt)return;this.mstep=0;this.mnext=this.ac.currentTime+.1;
     this.mt=setInterval(()=>this.msched(),180);
@@ -383,7 +499,9 @@ const Snd={
     if(!this.ac||!S.music||!S.sound)return;
     while(this.mnext<this.ac.currentTime+.7){this.mplay(this.mstep,this.mnext);this.mnext+=.36;this.mstep++}
   },
+  RAGA:[1,9/8,5/4,3/2,5/3,2,9/4,5/2,3],
   mplay(step,t){
+    if(S.musicStyle==='diwali')return this.mdiwali(step,t);
     const ac=this.ac,ch=this.CH[(step/8|0)%4],o=this.musicG;
     if(step%8===0){
       for(const m of ch)for(const dt of [-6,6]){
@@ -405,6 +523,7 @@ const Snd={
    colours
    ===================================================================== */
 const PALS={
+  diwali:{n:'Diwali mix',cols:[[42,100,58],[26,100,55],[345,90,58],[300,80,62]],c:'linear-gradient(90deg,#ffc83a,#ff8a1f,#e8335f,#c050e0)'},
   auto:{n:'Random',c:'conic-gradient(red,yellow,lime,cyan,blue,magenta,red)'},
   gold:{n:'Gold',cols:[[43,100,58],[35,100,55]],c:'#ffc233'},
   red:{n:'Red',cols:[[0,100,58]],c:'#ff3b3b'},
@@ -419,10 +538,11 @@ const PALS={
   fire:{n:'Fire',cols:[[10,100,52],[30,100,55],[48,100,60]],c:'linear-gradient(90deg,#ff3b1b,#ff9d1b,#ffe04b)'},
   rainbow:{n:'Rainbow',rainbow:true,c:'linear-gradient(90deg,red,yellow,lime,cyan,blue,magenta)'}
 };
-const AUTO_POOL=['gold','red','orange','green','cyan','blue','purple','pink','white','patriot','fire','rainbow'];
+const AUTO_POOL=['gold','gold','orange','red','pink','diwali','diwali','fire','green','purple','cyan','rainbow'];
 function pickCols(pal){
   if(pal==='auto')pal=pick(AUTO_POOL);
   const p=PALS[pal];if(p.rainbow)return {rainbow:true,list:[[0,100,60]]};
+  if(pal==='diwali'){const a=[...p.cols].sort(()=>Math.random()-.5);return {list:a.slice(0,Math.random()<.5?1:2)}}
   if(p.cols.length>1&&pal!=='patriot'&&pal!=='fire')return {list:p.cols};
   if(p.cols.length>1)return {list:p.cols};
   if(Math.random()<.3){const h=p.cols[0][0]+pick([-1,1])*rnd(30,90);return {list:[p.cols[0],[(h+360)%360,100,60]]}}
@@ -460,6 +580,7 @@ const SH={
     for(const ex of [-.36,.36])for(let i=0;i<8;i++){const t=i/8*TAU;a.push([ex+Math.cos(t)*.09,-.32+Math.sin(t)*.14])}
     const sm=Math.round(n*.2);for(let i=0;i<sm;i++){const t=.2*Math.PI+i/(sm-1)*.6*Math.PI;a.push([Math.cos(t)*.6,Math.sin(t)*.55+.02])}return a},
   saturn(n){return SH.sphere(Math.round(n*.55)).map(v=>[v[0]*.6,v[1]*.6]).concat(SH.ring(Math.round(n*.45),.28,-.35).map(v=>[v[0]*1.15,v[1]*1.15]))},
+  flame(n){const a=[];for(let i=0;i<n;i++){const t=i/n*TAU;a.push([Math.sin(t)*Math.sin(t/2)*1.05,-Math.cos(t)*.95])}return a},
   fan(n){const a=[];for(let i=0;i<n;i++){const t=-Math.PI/2+rnd(-.9,.9),m=rnd(.35,1);a.push([Math.cos(t)*m,Math.sin(t)*m])}return a}
 };
 
@@ -499,15 +620,16 @@ const TYPES={
   ring:{n:'Ring',e:'⭕'},double:{n:'Double ring',e:'🎯'},heart:{n:'Heart',e:'💖'},star:{n:'Star',e:'⭐'},
   spiral:{n:'Spiral',e:'🌀'},saturn:{n:'Saturn',e:'🪐'},smiley:{n:'Smiley',e:'😊'},butterfly:{n:'Butterfly',e:'🦋'},
   flower:{n:'Flower',e:'🏵'},crossette:{n:'Crossette',e:'✴'},crackle:{n:'Crackle',e:'✨'},strobe:{n:'Strobe',e:'💡'},
-  horsetail:{n:'Horsetail',e:'🐎'},fountain:{n:'Fountain',e:'⛲'},candle:{n:'Roman candle',e:'🕯'},text:{n:'Sky text',e:'🔤'},random:{n:'Random',e:'🎲'}
+  horsetail:{n:'Horsetail',e:'🐎'},diya:{n:'Diya flame',e:'🪔'},fountain:{n:'Anar (fountain)',e:'🌋'},chakri:{n:'Chakri (spinner)',e:'💫'},laddi:{n:'Laddi (string)',e:'🧨'},bomb:{n:'Bomb',e:'💣'},candle:{n:'Roman candle',e:'🕯'},text:{n:'Sky text',e:'🔤'},random:{n:'Random',e:'🎲'}
 };
-const RANDOM_TYPES=Object.keys(TYPES).filter(k=>k!=='random'&&k!=='text'&&k!=='fountain'&&k!=='candle');
-const BIG={chrys:1,willow:1,palm:1,double:1,saturn:1,butterfly:1};
+const GROUND=['fountain','chakri','laddi','candle'];
+const RANDOM_TYPES=Object.keys(TYPES).filter(k=>k!=='random'&&k!=='text'&&k!=='bomb'&&!GROUND.includes(k));
+const BIG={chrys:1,willow:1,palm:1,double:1,saturn:1,butterfly:1,diya:1};
 
-function explode(x,y,type,pal,sc=1){
+function explode(x,y,type,pal,sc=1,msg){
   const cols=pickCols(pal),c0=cols.list[0];
   const dist=clamp(1-y/H,0,1),pan=x/W*2-1,delay=S.realDelay?.03+dist*.22+Math.random()*.03:0;
-  const size=clamp((BIG[type]?.85:.6)*sc+(Math.random()*.15),.2,1.2);
+  const size=clamp((BIG[type]?.85:type==='bomb'?1.3:.6)*sc+(Math.random()*.15),.2,1.4);
   switch(type){
     case 'peony':burst(x,y,SH.sphere(120),{cols,speed:7.4,life:78,drag:.965,sc});break;
     case 'chrys':burst(x,y,SH.sphere(150),{cols,speed:7.8,life:100,drag:.972,glit:.16,sc,size:2});break;
@@ -527,15 +649,19 @@ function explode(x,y,type,pal,sc=1){
     case 'crackle':burst(x,y,SH.sphere(110),{cols,speed:7.2,life:72,drag:.966,crack:true,sc,size:2});break;
     case 'strobe':burst(x,y,SH.sphere(85),{cols:pal==='auto'?{list:[[55,20,95]]}:cols,speed:6,life:110,drag:.97,strobe:3,gm:.55,sc,size:2.4});break;
     case 'horsetail':burst(x,y,SH.fan(46),{cols:pal==='auto'?pickCols('gold'):cols,speed:8.5,life:130,drag:.975,gm:1.2,glit:.35,sc,size:2});break;
-    case 'text':textBurst(x,y,S.skyText,cols);break;
+    case 'diya':burst(x,y,SH.flame(110),{cols:pal==='auto'||pal==='diwali'?{list:[[34,100,56],[46,100,60]]}:cols,speed:6.8,life:90,drag:.96,gm:.4,sc,size:2.3,glit:.05});break;
+    case 'bomb':burst(x,y,SH.sphere(70),{cols:{list:[[48,60,92],[34,100,60]]},speed:9,life:26,drag:.9,sc,size:2.6,crack:true});break;
+    case 'text':textBurst(x,y,msg||S.skyText,cols);break;
     default:burst(x,y,SH.sphere(110),{cols,speed:7.2,life:78,drag:.965,sc});
   }
-  flashAt(x,y,c0,260*sc,.55);
+  flashAt(x,y,c0,(type==='bomb'?420:260)*sc,type==='bomb'?.9:.55);
   glowBurst(x,y,c0,clamp(.5+sc*.35+(BIG[type]?.2:0),.4,1.2));
   Snd.boom(size,pan,delay,c0[0]);
   if(type==='crackle'||type==='crossette')Snd.crackle(14,pan,delay+.25);
   if(type==='willow'||type==='horsetail'||type==='chrys'||type==='palm')Snd.fizz(pan,delay+.1,type==='willow'?2.4:1.4);
   if(type==='strobe')Snd.crackle(8,pan,delay+.1);
+  if(type==='bomb'){Snd.bang(pan,delay,1.4);Snd.crackle(10,pan,delay+.15)}
+  if(type==='diya'&&Math.random()<.6)Snd.bell(.5,delay+.15);
   if(S.crowd&&Math.random()<.13+(BIG[type]?.2:0))Snd.crowd(Math.random()<.35?'cheer':'ooh');
   if(S.shake&&size>.65)shakeAmt=Math.max(shakeAmt,size*7*SC);
 }
@@ -562,16 +688,31 @@ function pan(x){return x/W*2-1}
 function launch(type,tx,ty,o={}){
   if(type==='random')type=pick(RANDOM_TYPES);
   if(type==='fountain'){fountain(o.sx??clamp(tx,40,W-40),o);return}
+  if(type==='chakri'){chakri(clamp(tx,50,W-50),o);return}
+  if(type==='laddi'){laddi(clamp(tx,W*.15,W*.85),o);return}
   if(type==='candle'){candle(tx,ty,o);return}
   const sx=o.sx??clamp(tx+rnd(-W*.1,W*.1),20,W-20),sy=H-Math.min(24,H*.03);
   ty=clamp(ty,70,H*.8);
   const T=(38+(sy-ty)/H*50+rnd(-4,4))/(o.fast?1.4:1);
-  R.push({sx,sy,tx,ty,T,t:0,x:sx,y:sy,type,pal:o.pal||S.pal,sc:o.sc||1});
+  R.push({sx,sy,tx,ty,T,t:0,x:sx,y:sy,type,pal:o.pal||S.pal,sc:o.sc||1,msg:o.msg});
   Snd.launch(pan(sx),T*16.67/1000/Math.max(.2,S.speed));
 }
 function fountain(x,o){
   const pal=o.pal||S.pal;EM.push({x,y:H-6,age:0,dur:o.dur||190,cols:pickCols(pal==='auto'?'gold':pal)});
   Snd.fizz(pan(x),0,3.2);Snd.crackle(8,pan(x),.3);
+}
+function chakri(x,o){
+  const pal=o.pal||S.pal;EM.push({x,y:H-14,age:0,dur:o.dur||200,spin:true,ang:0,cols:pickCols(pal==='auto'?'diwali':pal),x0:x});
+  Snd.whirr(pan(x),200*16.67/1000/Math.max(.2,S.speed));
+}
+function laddi(x,o){
+  const n=26,y0=H*.8;
+  for(let i=0;i<n;i++)later(i*90+Math.random()*50,()=>{
+    const px=clamp(x+(i-n/2)*W*.012+rnd(-8,8),10,W-10),py=y0+rnd(-14,14),big=i===n-1;
+    burst(px,py,SH.sphere(big?60:16),{cols:{list:[[40,100,62],[26,100,58],[0,0,96]]},speed:big?7:3.2,life:big?36:18,drag:.9,size:big?2.6:2,sc:1,crack:big});
+    flashAt(px,py,[34,100,60],big?300:90,big?.8:.55);glowBurst(px,py,[34,100,58],big?.8:.28);
+    Snd.bang(pan(px),0,big?1.2:.55);if(big&&S.shake)shakeAmt=Math.max(shakeAmt,9*SC);
+  });
 }
 function candle(tx,ty,o){
   const n=7+(Math.random()*4|0),sx=clamp(tx,60,W-60),pal=o.pal||S.pal,cols=pal==='auto'?pick(AUTO_POOL):pal;
@@ -582,7 +723,7 @@ function candle(tx,ty,o){
   });
 }
 function finale(){
-  toast('🎇 Grand finale!');
+  toast('🎇 Happy Diwali! Grand finale!');if(S.dhol)Snd.dhol();Snd.bell(.8,0);
   const n=44;
   for(let i=0;i<n;i++){
     const t=i*(230-i*3.2);
@@ -593,7 +734,7 @@ function finale(){
   }
   const end=n*(230-n*3.2*.5);
   later(end,()=>{for(let i=0;i<5;i++)later(i*120,()=>launch(i%2?'chrys':'palm',W*(.2+i*.15),H*.28,{pal:'auto',sc:1.5,fast:true}));
-    later(1600,()=>{launch('text',W/2,H*.38,{pal:'rainbow',sc:1.2});Snd.crowd('clap')})});
+    later(1600,()=>{launch('text',W/2,H*.38,{pal:'diwali',sc:1.2,msg:'HAPPY DIWALI'});Snd.crowd('clap');Snd.bell(1,.6)})});
 }
 function volley(type,n=4){
   const t=type==='random'?pick(RANDOM_TYPES):type;
@@ -659,11 +800,22 @@ function frame(now){
     r.px=r.x;r.py=r.y;r.x=r.sx+(r.tx-r.sx)*e+Math.sin(r.t*.5)*1.4*(1-u);r.y=r.sy+(r.ty-r.sy)*e;
     if(S.sparkleTrail)for(let j=0;j<2;j++)spawn(r.x+rnd(-1,1),r.y,rnd(-.4,.4)+wind*5,rnd(.2,1.3),[rnd(28,45),100,rnd(55,72)],{life:rnd(14,28),size:1.2,drag:.92,gm:.9,fade:1.5});
     ctx.strokeStyle='rgba(255,230,170,.95)';ctx.lineWidth=2.4*SC;ctx.beginPath();ctx.moveTo(r.px,r.py);ctx.lineTo(r.x,r.y);ctx.stroke();
-    if(u>=1){R.splice(i,1);explode(r.x,r.y,r.type,r.pal,r.sc)}
+    if(u>=1){R.splice(i,1);explode(r.x,r.y,r.type,r.pal,r.sc,r.msg)}
   }
   // fountains
   for(let i=EM.length-1;i>=0;i--){
     const m=EM[i];m.age+=dt;if(m.age>m.dur){EM.splice(i,1);continue}
+    if(m.spin){
+      m.ang+=.62*dt;m.x=m.x0+Math.sin(m.age*.05)*W*.04;const prog=m.age/m.dur;
+      for(let j=0;j<Math.round(4*S.density);j++){
+        const c=m.cols.rainbow?[rnd(0,360),100,60]:m.cols.list[(Math.random()*m.cols.list.length)|0],a=m.ang+rnd(-.25,.25),sp=rnd(4,8.5)*SC*(1-prog*.3);
+        spawn(m.x,m.y-6,Math.cos(a)*sp,Math.sin(a)*sp*.8-.8,c,{life:rnd(22,42),size:1.7,drag:.94,gm:.9,fade:1.7,flick:Math.random()<.2});
+      }
+      ctx.fillStyle='rgba(255,230,160,.9)';ctx.beginPath();ctx.arc(m.x,m.y-6,5,0,TAU);ctx.fill();
+      if(Math.random()<.1)flashAt(m.x,m.y-20,m.cols.list[0],130,.3);
+      if(Math.random()<.1)glowBurst(m.x,H*.85,m.cols.list[0],.25);
+      continue;
+    }
     const rate=Math.round(5*S.density*(1-m.age/m.dur*.5));
     for(let j=0;j<rate;j++){const c=m.cols.rainbow?[rnd(0,360),100,60]:m.cols.list[(Math.random()*m.cols.list.length)|0];
       const a=-Math.PI/2+rnd(-.28,.28),sp=rnd(7,13)*SC;
@@ -708,11 +860,12 @@ function frame(now){
   requestAnimationFrame(frame);
 }
 
+const MSGS=['HAPPY DIWALI','शुभ दीपावली','DIWALI','LIGHTS!','HAPPY DIWALI'];
 function autoStep(){
   const r=Math.random();
-  if(S.skyAuto&&r<.06){launch('text',rnd(W*.3,W*.7),rnd(H*.25,H*.4),{pal:pick(['rainbow','gold','auto']),sc:1})}
+  if(S.skyAuto&&r<.07){launch('text',rnd(W*.3,W*.7),rnd(H*.25,H*.4),{pal:pick(['diwali','gold','rainbow']),sc:1,msg:S.skyText===DEFAULTS.skyText?pick(MSGS):S.skyText})}
   else if(S.volley&&r<.2){volley(Math.random()<.5?'random':pick(RANDOM_TYPES),3+(Math.random()*3|0))}
-  else if(r<.26)launch(pick(['fountain','candle']),rnd(W*.1,W*.9),H*.4,{});
+  else if(r<.3)launch(pick(GROUND),rnd(W*.1,W*.9),H*.4,{});
   else launch('random',rnd(W*.08,W*.92),rnd(H*.12,H*.55),{sc:rnd(.8,1.25)});
 }
 
@@ -720,11 +873,13 @@ function autoStep(){
    marquee
    ===================================================================== */
 function applyMarquee(){
-  const mq=$('#mq');mq.hidden=!S.mq;
-  mq.className=`st-${S.mqStyle} cm-${S.mqColorMode} pos-${S.mqPos}`;
+  const mq=$('#mq'),mw=$('#mqw');mw.hidden=!S.mq;mw.className=`pos-${S.mqPos}`;
+  mq.className=`st-${S.mqStyle} cm-${S.mqColorMode}`;
   mq.style.setProperty('--mqs',S.mqSize+'px');mq.style.setProperty('--mqg',S.mqGlow);
   mq.style.fontFamily=S.mqFont;
   if(S.mqColorMode==='solid')mq.style.setProperty('--mqc',S.mqColor);
+  else if(S.mqColorMode==='festive')mq.style.setProperty('--mqc','#ffa21f');
+  else if(S.mqColorMode==='rainbow')mq.style.setProperty('--mqc','#ff5fd0');
   else if(S.mqColorMode==='burst')mq.style.setProperty('--mqc',mqBurstCol);
   const tr=mq.querySelector('.track'),unit=(S.mqText||' ')+'      ✦      ';
   tr.innerHTML='';const probe=document.createElement('span');probe.className='half';probe.textContent=unit;tr.appendChild(probe);
@@ -746,16 +901,16 @@ const SCHEMA={
   ],
   Sound:[
     ['h','Volume'],['sound','check','Sound on'],['vol','range','Master volume',0,1,.01],['sfxVol','range','Effects volume',0,1,.01],['musicVol','range','Music volume',0,1,.01],
-    ['h','Sound style'],['soundStyle','select','Style',[['real','Realistic'],['arcade','Arcade 8-bit'],['bells','Crystal bells']]],
+    ['h','Sound style'],['soundStyle','select','Style',[['real','Realistic'],['arcade','Arcade 8-bit'],['bells','Temple bells']]],
     ['h','Layers'],['whistle','check','Launch whistle'],['thump','check','Mortar launch thump'],['boom','check','Explosion boom'],['crackle','check','Crackle, fizz & sizzle'],
-    ['crowd','check','Crowd ooh / aah / cheers'],['realDelay','check','Realistic sound delay'],['music','check','Ambient music (generative)'],
+    ['crowd','check','Crowd ooh / aah / cheers'],['realDelay','check','Realistic sound delay'],['dhol','check','Dhol drums on finale'],['music','check','Festive music (generative)'],['musicStyle','select','Music style',[['diwali','Diwali raga & tabla'],['ambient','Ambient pads']]],
     ['btn','🔔 Test sound','test']
   ],
   Text:[
     ['h','Scrolling marquee'],['mq','check','Show marquee'],['mqText','text','Marquee text',null,null,null,true],
     ['mqSpeed','range','Scroll speed',40,500,10],['mqSize','range','Text size',20,140,2],['mqFont','select','Font',FONTS],
     ['mqStyle','select','Style',[['neon','Neon'],['outline','Outline'],['led','LED dots'],['retro','Retro 3D']]],
-    ['mqColorMode','select','Colour',[['burst','Follows fireworks'],['rainbow','Rainbow flow'],['solid','Solid colour']]],
+    ['mqColorMode','select','Colour',[['festive','Diwali gold flow'],['burst','Follows fireworks'],['rainbow','Rainbow flow'],['solid','Solid colour']]],
     ['mqColor','color','Solid colour'],['mqGlow','range','Glow strength',0,60,1],['mqPos','select','Position',[['top','Top'],['middle','Middle'],['bottom','Bottom']]],
     ['mqPulse','check','Pulse on explosions'],
     ['h','Text in the sky'],['skyText','text','Firework message',null,null,null,true],['skyFont','select','Sky font',FONTS],['skyAuto','check','Include text in auto show'],
@@ -767,8 +922,9 @@ const SCHEMA={
     ['note','Glow flares on the side closest to each explosion, in the explosion’s own colour.']
   ],
   Scene:[
-    ['h','Backdrop'],['theme','select','Sky',[['night','Night'],['dusk','Dusk'],['void','Deep space'],['aurora','Aurora']]],
-    ['skyline','select','Horizon',[['city','City skyline'],['hills','Hills'],['none','Open sky']]],['stars','check','Stars'],['moon','check','Moon'],
+    ['h','Backdrop'],['theme','select','Sky',[['diwali','Diwali night'],['night','Night'],['dusk','Dusk'],['void','Deep space'],['aurora','Aurora']]],
+    ['skyline','select','Horizon',[['palace','Temple & palaces'],['city','City skyline'],['hills','Hills'],['none','Open sky']]],['stars','check','Stars'],['moon','check','Moon'],
+    ['h','Diwali decorations'],['diyas','check','Row of diyas (clay lamps)'],['lanterns','check','Hanging lanterns'],
     ['h','Data'],['btn','↺ Reset all settings','reset']
   ]
 };
@@ -797,6 +953,7 @@ function set(k,v){
   if(k.startsWith('mq'))applyMarquee();
   if(['vol','sfxVol','musicVol','sound','music'].includes(k)){Snd.apply();syncMute();if(k==='music'&&v)Snd.init()}
   if(['theme','skyline','stars','moon'].includes(k))drawScene();
+  if(k==='diyas'||k==='lanterns')buildDeco();
 }
 const actions={
   test(){Snd.init();Snd.launch(0,.7);setTimeout(()=>Snd.boom(.8,0,0,40),750);setTimeout(()=>Snd.crackle(18,0,0),1100);setTimeout(()=>Snd.crowd('ooh'),1500)},
@@ -814,6 +971,12 @@ function buildDock(){
     b.onclick=()=>{S.pal=k;save();buildDock()};pr.appendChild(b)}
   const on=tr.querySelector('.on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
 }
+function buildDeco(){
+  const d=$('#diyas');d.innerHTML='';d.style.display=S.diyas?'flex':'none';
+  const n=Math.max(6,Math.floor(W/84));for(let i=0;i<n;i++){const e=document.createElement('i');e.className='diya';e.style.setProperty('--d',(-Math.random()*.3).toFixed(2)+'s');d.appendChild(e)}
+  const l=$('#lanterns');l.innerHTML='';l.style.display=S.lanterns?'block':'none';
+  [[1.2,26,0],[6.5,52,-1.2],[93,26,-.6],[87.5,52,-1.8]].forEach(([x,len,dl])=>{const e=document.createElement('div');e.className='lantern';e.style.left=x+'%';e.style.setProperty('--len',len+'px');e.style.setProperty('--d',dl+'s');e.innerHTML='<i></i>';l.appendChild(e)});
+}
 function syncMute(){$('#bMute').textContent=S.sound?'🔊':'🔇';$('#bMute').classList.toggle('on',!S.sound)}
 function syncAuto(){$('#bAuto').classList.toggle('on',S.autoShow);$('#bAuto').textContent=S.autoShow?'⏸ Auto show':'▶ Auto show'}
 let toastT=0;
@@ -828,14 +991,14 @@ fxc.addEventListener('pointerdown',e=>{
 });
 fxc.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY});
 const up=()=>{down=false};fxc.addEventListener('pointerup',up);fxc.addEventListener('pointercancel',up);
-setInterval(()=>{if(down&&S.type!=='fountain'&&S.type!=='candle'&&S.type!=='text')launch(S.type,px,py,{})},170);
+setInterval(()=>{if(down&&!GROUND.includes(S.type)&&S.type!=='text')launch(S.type,px,py,{})},170);
 
 $('#bSettings').onclick=()=>$('#panel').classList.toggle('open');
 $('#bMute').onclick=()=>{Snd.init();set('sound',!S.sound);toast(S.sound?'Sound on':'Muted');if(curTab==='Sound')buildPanel()};
 $('#bAuto').onclick=()=>{S.autoShow=!S.autoShow;save();syncAuto();toast(S.autoShow?'Auto show on':'Auto show off');if(curTab==='Show')buildPanel()};
 $('#bFinale').onclick=finale;
 $('#bText').onclick=actions.sky;
-$('#bVolley').onclick=()=>volley(S.type==='fountain'||S.type==='candle'||S.type==='text'?'random':S.type,5);
+$('#bVolley').onclick=()=>volley(GROUND.includes(S.type)||S.type==='text'||S.type==='bomb'?'random':S.type,5);
 $('#bClear').onclick=()=>{P.length=R.length=FL.length=EM.length=TQ.length=0;ctx.clearRect(0,0,W,H)};
 function fullscreen(){const d=document;if(d.fullscreenElement)d.exitFullscreen();else d.documentElement.requestFullscreen&&d.documentElement.requestFullscreen().catch(()=>{})}
 $('#bFull').onclick=fullscreen;
@@ -866,7 +1029,7 @@ addEventListener('resize',()=>{resize();applyMarquee()});
 function go(sound){
   S.sound=sound;save();Snd.init();Snd.apply();syncMute();
   $('#start').classList.add('gone');
-  if(sound){later(300,()=>launch('chrys',W/2,H*.3,{pal:'gold',sc:1.2}))}
+  if(sound){Snd.bell(.9,0);later(500,()=>launch('chrys',W/2,H*.3,{pal:'gold',sc:1.2}))}
 }
 $('#goSound').onclick=()=>go(true);$('#goMute').onclick=()=>go(false);
 document.addEventListener('visibilitychange',()=>{if(Snd.ac){document.hidden?Snd.ac.suspend():(S.sound&&Snd.ac.resume())}});
