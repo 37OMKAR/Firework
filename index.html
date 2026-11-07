@@ -388,13 +388,16 @@ function drawScene(){
    ===================================================================== */
 const Snd={
   ac:null,voices:0,nextClick:0,
-  init(){
+  init(ctxOverride){
     if(!this.ac){
-      const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
-      const ac=this.ac=new AC();
+      const AC=window.AudioContext||window.webkitAudioContext;if(!AC&&!ctxOverride)return;
+      const ac=this.ac=ctxOverride||new AC();
       this.comp=ac.createDynamicsCompressor();this.comp.threshold.value=-16;this.comp.ratio.value=5;this.comp.attack.value=.003;this.comp.release.value=.25;
       this.master=ac.createGain();this.sfx=ac.createGain();this.musicG=ac.createGain();
-      this.sfx.connect(this.master);this.musicG.connect(this.master);this.master.connect(this.comp);this.comp.connect(ac.destination);
+      this.sfx.connect(this.master);this.musicG.connect(this.master);this.master.connect(this.comp);
+      const lim=ac.createDynamicsCompressor();lim.threshold.value=-6;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.001;lim.release.value=.12;
+      const sh=ac.createWaveShaper(),cv=new Float32Array(1024);for(let i=0;i<1024;i++){const x=i/512-1;cv[i]=Math.tanh(x*1.2)/Math.tanh(1.2)*.98}sh.curve=cv;
+      this.comp.connect(lim);lim.connect(sh);sh.connect(ac.destination);
       const len=ac.sampleRate*2.6,ir=ac.createBuffer(2,len,ac.sampleRate);
       for(let c=0;c<2;c++){const d=ir.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3)}
       this.rev=ac.createConvolver();this.rev.buffer=ir;const rg=ac.createGain();rg.gain.value=.8;this.rev.connect(rg);rg.connect(this.sfx);
@@ -405,7 +408,7 @@ const Snd={
       this.apply();
       if(S.samples)this.loadSamples();
     }
-    if(this.ac.state==='suspended')this.ac.resume();
+    if(this.ac.state==='suspended'&&this.ac.resume&&!(window.OfflineAudioContext&&this.ac instanceof OfflineAudioContext))this.ac.resume();
     if(S.music)this.startMusic();
   },
   apply(){
@@ -483,9 +486,12 @@ const Snd={
     this.env(g,t,.003,.6+size*.6,.5+size*1.4);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+2.4);this.track(n);
     this.osc('sine',92-size*26,28,t,.6+size*.7,.95*(.5+size),b,.002);
     const n2=this.noise(),f2=ac.createBiquadFilter(),g2=ac.createGain();f2.type='bandpass';f2.frequency.value=1800;f2.Q.value=.8;
-    this.env(g2,t,.001,.55,.07);n2.connect(f2);f2.connect(g2);g2.connect(b);n2.start(t);n2.stop(t+.2);this.track(n2);
-    const bn=ac.createBufferSource();bn.buffer=this.bb;bn.loop=true;bn.loopStart=Math.random()*2;const bf=ac.createBiquadFilter(),bg=ac.createGain();bf.type='lowpass';bf.frequency.value=230;
-    this.env(bg,t+.02,.15,.28*(.5+size),1.8+size*1.6);bn.connect(bf);bf.connect(bg);bg.connect(b);bn.start(t);bn.stop(t+3.6);this.track(bn);
+    this.env(g2,t,.001,.95,.08);n2.connect(f2);f2.connect(g2);g2.connect(b);n2.start(t);n2.stop(t+.2);this.track(n2);
+    const n3=this.noise(),f3=ac.createBiquadFilter(),g3=ac.createGain();f3.type='highpass';f3.frequency.value=4800;this.env(g3,t,.0008,.6,.035);n3.connect(f3);f3.connect(g3);g3.connect(b);n3.start(t);n3.stop(t+.1);this.track(n3);
+    this.osc('sine',58*rnd(.94,1.06),32,t+.02,1.5+size*1.2,.4*(.4+size),b,.012);
+    if(size>.55)this.clicks(Math.round(40+size*70),1.6,{len:90,freq:3200,gain:.14,pan,delay:delay+.22,wet:.5});
+    const bn=ac.createBufferSource();bn.buffer=this.bb;bn.loop=true;bn.loopStart=Math.random()*2;const bf=ac.createBiquadFilter(),bg=ac.createGain();bf.type='lowpass';bf.frequency.value=300;
+    this.env(bg,t+.02,.12,.85*(.5+size),3.4+size*2);bn.connect(bf);bf.connect(bg);bg.connect(b);bn.start(t);bn.stop(t+6.5);this.track(bn);
   },
   boom(size,pan,delay,hue){
     if(!this.ok('boom'))return;
@@ -500,7 +506,7 @@ const Snd={
     for(let i=0;i<3;i++){
       const t=ac.currentTime+delay+.4+i*.34+Math.random()*.08,b=this.bus(pan*(i%2?-.6:.6),.6),n=ac.createBufferSource();
       n.buffer=this.bb;n.loop=true;n.loopStart=Math.random()*2;const f=ac.createBiquadFilter(),g=ac.createGain();f.type='lowpass';f.frequency.value=420-i*100;
-      this.env(g,t,.04,.4*size/(i+1),.55+i*.25);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+1.4);this.track(n);
+      this.env(g,t,.05,1.1*size/(i+1),1.1+i*.5);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+2.2);this.track(n);
     }
   },
   async loadSamples(){

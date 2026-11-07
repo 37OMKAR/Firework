@@ -41,3 +41,6 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 
 ## v6 – minimal chrome
 Only a **Full screen** button (top right) and a **Controls** button (bottom centre) are on the sky. Controls opens the sheet (Shells · Colours · Shows · Wish); Sound, Save photo, Settings and Hide UI are in its Shows tab. The scrolling ticker is off by default (Settings → Text → Show marquee).
+
+## v7 – sound
+Booms are layered (sharp crack + click, body, sub-bass, long rumbling tail, rolling echoes, crackle tail). Measured by offline rendering: louder boom, ~14 dB stronger late tail than before. A master limiter + soft clipper keeps stacked finales from clipping (worst-case stack peak 1.40 → 0.92, zero clipped samples).
