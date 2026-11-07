@@ -54,3 +54,6 @@ Auto show, festive music and night ambience are now off by default; the sky only
 - **Flower pot (anar):** hand lights the wick; the pot erupts in a fountain that changes colour.
 - **Sparkler (phuljhadi):** a girl's hand (gold bangles) holds a golden sparkler; hold and drag on the sky to draw with it.
 - **Crash protection:** caps on rockets (42), on-screen props (5), queued shots and audio voices; per-button rate limits; Finale/shows can't be stacked; the adaptive-quality governor sheds load. Stress-tested with hundreds of rapid taps and button mashing.
+
+## v10 – shells fire when picked
+Picking a shell in Controls → Shells now fires it immediately where you can see it. Low-placed items (laddi, sutli bomb, flower pot, sparkler, chakri, candle, sky text) close the sheet first so they are not hidden behind it; picking a colour fires a preview in that colour.
