@@ -74,3 +74,7 @@ Firing a cracker no longer pops up a text card over the sky. A small half-transp
 
 ## v15
 - Welcome page: "Developed by Om" credit line. Pre-deployment security re-audit recorded in SECURITY.md.
+
+## v16
+- https redirect + https-only share links (fixes "not secure" in WhatsApp), upgrade-insecure-requests header.
+- Hold-to-fire releases on every touch/blur/visibility signal with an 8 s cap (iOS could miss pointerup and fire forever).
