@@ -32,3 +32,9 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 - Controls is a compact tabbed bottom sheet (Shells · Colours · Shows · Wish); Settings is a bottom sheet on phones. Only one is open at a time and the sky stays visible above.
 - The skyline is a thin strip by default (Settings → Scene → Skyline height, or set Horizon to "Open sky"); diyas are smaller on phones.
 - Recorded booms: list files in `sounds/manifest.json` (see `sounds/README.md`).
+
+## v5 – crisp rendering
+- Sparks are thin tapered streaks with a small bright head (no more fat blobs); text fireworks use crisp dots.
+- The sky stays dark: flash, bloom, smoke and edge glow were toned down, the horizon gradient is darker, and the neon frame border is off by default.
+- Pixel-density cap raised to 2x on capable devices (the adaptive-quality governor still steps down if the device struggles).
+- Small ticker "HAPPY DIWALI from Om" under the buttons — edit it in Settings → Text.
