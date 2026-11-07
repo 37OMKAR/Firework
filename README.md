@@ -20,3 +20,10 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 - **Bloom, smoke & flash:** low-res bloom pass, drifting smoke that is lit by later bursts, rocket comet tails, pistil cores in round shells.
 - **Cheap DOM:** the marquee is baked once to a canvas and scrolled with a GPU-only transform; edge glow only touches the DOM when a value changes (no blend modes, no per-frame box-shadow).
 - **Adaptive quality:** *Settings → Show → Quality* (Auto / High / Medium / Low). Auto watches frame time and scales particle cap, density, resolution, bloom and smoke up/down. Press **P** (or the setting) for a live FPS meter.
+
+## v3 – sky-first UI, more shells, shows & sound
+- **Sky-first UI:** only the sky plus a few small buttons by default. **☰ Controls** opens shells, colours, wish box and shows; **⚙ Settings** opens the options. Marquee and lanterns are now off by default (turn on in Settings → Text / Scene).
+- **Bigger, finer bursts:** ~35% more sparks, wider shells, finer longer streaks.
+- **36 shells:** adds Kamuro, Silver willow, Brocade, Dahlia, Two colour, Colour change, Triple pistil, Triple blast, Serpent, Comet and Crackle chrysanthemum.
+- **Shows:** 🎆 Grand show (~70 s, four acts), 📅 Today's show (same show for everyone on a given date), ⏱ Countdown 10→0 into a finale with your text, ✍ Write in sky, 🔗 Share greeting (link opens with your message written in the sky).
+- **Sound:** layered synthesized booms (crack + body + sub thump + rumbling tail), rolling echoes, optional double boom, night ambience (wind & crickets), button clicks, countdown ticks, sky-text shimmer, crossette pops. Optional recorded booms: see `sounds/README.md`.
