@@ -186,6 +186,13 @@ body.ctrl #dock{display:flex}
   .f input[type=range]{width:46%}.f input[type=text],.f select{width:48%}
   #start h1{font-size:44px}#start .rangoli{width:150px;font-size:40px}#start p{font-size:15px}
 }
+
+/* ===== v6: BlastSky-style minimal chrome ===== */
+#top{justify-content:flex-end;height:auto;padding:max(12px,env(safe-area-inset-top)) 14px 0;background:none}
+#top .btn,#top .btn:hover{width:auto;height:auto;padding:8px 14px;font-size:14px;display:inline-block;border-radius:999px;background:rgba(10,12,26,.7);border:1px solid rgba(255,255,255,.2);text-shadow:none;font-weight:600}
+#bControls{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:9;padding:10px 20px;border-radius:999px;font-size:15px;
+  background:rgba(10,12,26,.78);border:1px solid rgba(255,255,255,.22)}
+body.ctrl #bControls,body.hideui #bControls{display:none}
 </style>
 </head>
 <body>
@@ -204,15 +211,8 @@ body.ctrl #dock{display:flex}
 <div id="lanterns"></div>
 <div id="diyas"></div>
 
-<div id="top">
-  <div id="brand"><span class="logo">🪔</span> <span class="nm">Diwali Fireworks</span><small>शुभ दीपावली · tap the sky</small></div>
-  <button class="btn" id="bControls" title="Shells, colours & shows (C)">☰<span class="lbl"> Controls</span></button>
-  <button class="btn" id="bSettings" title="Settings">⚙<span class="lbl"> Settings</span></button>
-  <button class="btn" id="bMute" title="Mute (M)">🔊</button>
-  <button class="btn" id="bShot" title="Screenshot">📷</button>
-  <button class="btn" id="bFull" title="Fullscreen (F)">⛶</button>
-  <button class="btn" id="bHide" title="Hide UI (H)">👁</button>
-</div>
+<div id="top"><button class="btn" id="bFull" title="Fullscreen (F)">⛶ Full screen</button></div>
+<button class="btn" id="bControls" title="Shells, colours, shows & settings (C)">⚙ Controls</button>
 <button class="btn" id="showUI" title="Show UI (H)">☰</button>
 
 <aside id="panel"><div id="tabs"></div><div id="tabBody"></div></aside>
@@ -234,6 +234,10 @@ body.ctrl #dock{display:flex}
     <button class="btn" id="bGround">⛲ Ground fx</button>
     <button class="btn" id="bText">🔤 Sky text</button>
     <button class="btn" id="bClear">🧹 Clear sky</button>
+    <button class="btn" id="bMute">🔊 Sound on</button>
+    <button class="btn" id="bShot">📷 Save photo</button>
+    <button class="btn" id="bSettings">⚙ Settings</button>
+    <button class="btn" id="bHide">👁 Hide UI</button>
   </div></div>
   <div class="dpane" id="p-wish"><div class="wishrow">
     <input id="wish" type="text" maxlength="28" placeholder="Type a wish, e.g. Happy Diwali" autocomplete="off">
@@ -273,16 +277,16 @@ const DEFAULTS={
   autoShow:true,autoRate:1,volley:true,density:1,size:1,gravity:1,wind:0,speed:1,trail:7,
   bloom:true,shake:true,flash:true,sparkleTrail:true,
   sound:true,vol:.8,sfxVol:.9,musicVol:.5,soundStyle:'real',whistle:true,boom:true,crackle:true,thump:true,crowd:true,music:true,musicStyle:'diwali',realDelay:true,dhol:true,
-  mq:true,mqText:'HAPPY DIWALI from Om',mqSpeed:70,mqSize:16,mqFont:FONTS[1][0],
+  mq:false,mqText:'HAPPY DIWALI from Om',mqSpeed:70,mqSize:16,mqFont:FONTS[1][0],
   mqStyle:'neon',mqColorMode:'festive',mqColor:'#ffb300',mqGlow:6,mqPos:'top',mqPulse:false,
   skyText:'HAPPY DIWALI',skyFont:FONTS[0][0],skyAuto:true,
   edge:true,edgeMode:'reactive',edgeInt:.45,edgeW:110,edgeColor:'#ffa21f',frame:false,
   stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:true,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
 };
 const S=Object.assign({},DEFAULTS);
-try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v4')||'{}'))}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v5')||'{}'))}catch(e){}
 let saveT=0;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v4',JSON.stringify(S))}catch(e){}},250)}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v5',JSON.stringify(S))}catch(e){}},250)}
 
 /* =====================================================================
    canvas setup
@@ -1250,7 +1254,7 @@ function buildDeco(){
   [[1.2,26,0],[6.5,52,-1.2],[93,26,-.6],[87.5,52,-1.8]].forEach(([x,len,dl])=>{const e=document.createElement('div');e.className='lantern';e.style.left=x+'%';e.style.setProperty('--len',len+'px');e.style.setProperty('--d',dl+'s');e.innerHTML='<i></i>';l.appendChild(e)});
 }
 function applyMisc(){cityc.style.zIndex=S.cityFront?3:1}
-function syncMute(){$('#bMute').textContent=S.sound?'🔊':'🔇';$('#bMute').classList.toggle('on',!S.sound)}
+function syncMute(){$('#bMute').textContent=S.sound?'🔊 Sound on':'🔇 Muted';$('#bMute').classList.toggle('on',!S.sound)}
 function syncAuto(){$('#bAuto').classList.toggle('on',S.autoShow);$('#bAuto').textContent=S.autoShow?'⏸ Auto show':'▶ Auto show'}
 let toastT=0;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1600)}

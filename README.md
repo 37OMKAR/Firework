@@ -38,3 +38,6 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 - The sky stays dark: flash, bloom, smoke and edge glow were toned down, the horizon gradient is darker, and the neon frame border is off by default.
 - Pixel-density cap raised to 2x on capable devices (the adaptive-quality governor still steps down if the device struggles).
 - Small ticker "HAPPY DIWALI from Om" under the buttons — edit it in Settings → Text.
+
+## v6 – minimal chrome
+Only a **Full screen** button (top right) and a **Controls** button (bottom centre) are on the sky. Controls opens the sheet (Shells · Colours · Shows · Wish); Sound, Save photo, Settings and Hide UI are in its Shows tab. The scrolling ticker is off by default (Settings → Text → Show marquee).
