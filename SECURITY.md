@@ -30,3 +30,11 @@ active attack tests (hostile `localStorage`, hostile greeting links, a malicious
 4. **Greeting links** are unauthenticated: anyone can craft one with any 28-character text. Content is a short text drawn in the sky, not HTML, but a host may want a profanity filter.
 5. Frame-busting / clickjacking protection and HSTS only work as **HTTP headers** (use `vercel.json` or `_headers`); a `<meta>` tag cannot set them.
 6. Hosted preview pages in claude.ai artifacts are governed by that viewer's own sandbox and CSP; the CSP `<meta>` is intentionally omitted from the artifact build.
+
+## Pre-deployment re-audit (v14: 15 languages, neon-frame default, credit line)
+- `lang` and every other setting is validated by `SCHEMA` / `sanitizeSettings()`; tampered values (numbers, null, unknown codes, `__proto__`) fall back to English. Translated strings are only ever written with `textContent` / `append` (the one `innerHTML` that remains receives a static palette colour).
+- Storage migration v6 -> v7 copies only known keys through the same validation.
+- Re-run on the final build: 86 button checks, 17 attack tests, hostile-language test, 500 crackers + 500 shells stress test (R=42, props=5, no errors), 15-language switch/persistence test, CSP run with zero violations (apart from the Google Fonts hosts, which are allowed).
+- No secrets in the tree or any commit; only tracked files are the app, docs, headers, `serve.sh`, `sounds/`. No `eval`/`document.write`/`postMessage`/`window.open`/navigation sinks.
+- Dev server exposes only `index.html` and `sounds/` (`.git`, README, scripts return 404).
+- Still open (unchanged): `unsafe-inline` script (single file), Google Fonts third-party request, `window.Firework` debug global, unauthenticated greeting links. Deploy with the header files so HSTS / frame-ancestors apply.

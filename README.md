@@ -71,3 +71,6 @@ Firing a cracker no longer pops up a text card over the sky. A small half-transp
 ## v14
 - Language dropdown: English (default) + 14 more (Hindi, Marathi, Bengali, Tamil, Telugu, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Urdu (RTL), Sanskrit, ...). The 12 new languages translate the main interface; settings details and long cracker descriptions fall back to English. Native review is recommended.
 - Neon frame border is on by default (changeable in Glow settings). Storage key is now `fw-studio-v7`; v6 settings migrate with the frame reset to the new default.
+
+## v15
+- Welcome page: "Developed by Om" credit line. Pre-deployment security re-audit recorded in SECURITY.md.
