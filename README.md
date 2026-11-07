@@ -47,3 +47,10 @@ Booms are layered (sharp crack + click, body, sub-bass, long rumbling tail, roll
 
 ## v8 – quiet by default
 Auto show, festive music and night ambience are now off by default; the sky only fires when you tap. Turn them on in Controls → Shows (Auto show) and Settings → Sound.
+
+## v9 – hands & hand-lit crackers
+- **Laddi (hand-lit):** a guy's hand lights the fuse of a hanging string of crackers; they burst one by one from the bottom up.
+- **Sutli bomb:** hand lights the wick, the spark runs down, then one huge bang with shockwave and debris.
+- **Flower pot (anar):** hand lights the wick; the pot erupts in a fountain that changes colour.
+- **Sparkler (phuljhadi):** a girl's hand (gold bangles) holds a golden sparkler; hold and drag on the sky to draw with it.
+- **Crash protection:** caps on rockets (42), on-screen props (5), queued shots and audio voices; per-button rate limits; Finale/shows can't be stacked; the adaptive-quality governor sheds load. Stress-tested with hundreds of rapid taps and button mashing.
