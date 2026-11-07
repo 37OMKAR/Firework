@@ -27,3 +27,8 @@ A free, single-file Diwali fireworks simulator. Open `index.html` in any modern 
 - **36 shells:** adds Kamuro, Silver willow, Brocade, Dahlia, Two colour, Colour change, Triple pistil, Triple blast, Serpent, Comet and Crackle chrysanthemum.
 - **Shows:** 🎆 Grand show (~70 s, four acts), 📅 Today's show (same show for everyone on a given date), ⏱ Countdown 10→0 into a finale with your text, ✍ Write in sky, 🔗 Share greeting (link opens with your message written in the sky).
 - **Sound:** layered synthesized booms (crack + body + sub thump + rumbling tail), rolling echoes, optional double boom, night ambience (wind & crickets), button clicks, countdown ticks, sky-text shimmer, crossette pops. Optional recorded booms: see `sounds/README.md`.
+
+## v4 – mobile-first layout
+- Controls is a compact tabbed bottom sheet (Shells · Colours · Shows · Wish); Settings is a bottom sheet on phones. Only one is open at a time and the sky stays visible above.
+- The skyline is a thin strip by default (Settings → Scene → Skyline height, or set Horizon to "Open sky"); diyas are smaller on phones.
+- Recorded booms: list files in `sounds/manifest.json` (see `sounds/README.md`).

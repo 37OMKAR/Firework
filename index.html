@@ -126,7 +126,7 @@ body.ctrl #dock{display:flex}
 }
 
 /* ---------- Diwali decorations ---------- */
-#diyas{position:fixed;left:0;right:0;bottom:var(--dockH);height:46px;display:flex;justify-content:space-around;align-items:flex-end;z-index:3;pointer-events:none;padding:0 6px}
+#diyas{position:fixed;left:0;right:0;bottom:0;height:46px;display:flex;justify-content:space-around;align-items:flex-end;z-index:3;pointer-events:none;padding:0 6px}
 .diya{position:relative;width:36px;height:15px;background:linear-gradient(#f0883a,#9a3b12);border-radius:3px 3px 36px 36px/3px 3px 15px 15px;box-shadow:0 0 16px rgba(255,160,40,.7),inset 0 2px 0 rgba(255,220,150,.6)}
 .diya::before{content:"";position:absolute;left:50%;bottom:11px;width:10px;height:21px;margin-left:-5px;border-radius:50% 50% 50% 50%/65% 65% 35% 35%;
   background:radial-gradient(ellipse at 50% 72%,#fffbe0 0 18%,#ffc83a 45%,#ff6a00 85%,transparent);transform-origin:50% 100%;
@@ -144,6 +144,48 @@ body.ctrl #dock{display:flex}
 #mqw.pos-middle{top:42%}
 #mqw.pos-bottom{top:auto;bottom:calc(var(--dockH) + 52px)}
 #mqw[hidden]{display:none}
+
+/* ===== v4: compact, mobile-first sheets ===== */
+#dock{left:50%;right:auto;transform:translateX(-50%);width:min(940px,100%);padding:0;gap:0;background:#1c0818;border:2px solid var(--line);border-bottom:0;
+  border-radius:18px 18px 0 0;max-height:min(46vh,420px);overflow:hidden;box-shadow:0 -10px 40px rgba(0,0,0,.6)}
+body.ctrl #dock{display:flex}
+#dtabs{display:flex;gap:2px;padding:6px 8px 0;background:#2a0d22;border-bottom:1.5px solid var(--line);flex:0 0 auto}
+#dtabs button{flex:1;appearance:none;border:0;background:none;color:var(--dim);padding:11px 4px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;border-bottom:3px solid transparent}
+#dtabs button.on{color:#fff;border-color:#ffb300;background:rgba(255,179,0,.12)}
+#dtabs .xbtn,#tabs .xbtn{flex:0 0 46px;font-size:18px;color:#fff}
+.dpane{display:none;overflow-y:auto;padding:12px;-webkit-overflow-scrolling:touch}
+.dpane.on{display:block}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.grid.wide{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+#types,#pals{display:grid;flex-wrap:nowrap;overflow:visible}
+.grid .chip{width:100%;padding:10px 6px;font-size:14px;border-radius:12px;text-align:center;white-space:normal;line-height:1.15}
+.grid .btn{width:100%;padding:12px 8px;font-size:14px;border-radius:12px}
+.chip.pal{display:flex;align-items:center;gap:8px;justify-content:flex-start;padding:8px 10px}
+.chip.pal i{flex:0 0 22px;height:22px;border-radius:50%;border:2px solid rgba(255,255,255,.6)}
+.wishrow{display:flex;flex-wrap:wrap;gap:8px}
+.wishrow #wish{flex:1 1 100%;min-width:0}
+.wishrow .btn{flex:1 1 140px;padding:12px}
+#panel{border-radius:18px}
+#tabs{align-items:stretch}
+.diya{transform:scale(.72);transform-origin:50% 100%}
+@media (max-width:640px){
+  :root{--top:52px}
+  #top{gap:6px;padding:0 10px}
+  #top .btn{width:42px;height:42px;padding:0;font-size:18px;border-radius:12px;display:grid;place-items:center}
+  #brand{font-size:26px}
+  #dock{width:100%;max-height:48vh;border-radius:16px 16px 0 0}
+  .grid{grid-template-columns:repeat(3,1fr)}
+  .grid.wide{grid-template-columns:repeat(2,1fr)}
+  .grid .chip{font-size:13px;padding:10px 4px}
+  #dtabs button{font-size:14px;padding:11px 2px}
+  #panel{top:auto;bottom:0;left:0;right:0;width:auto;max-height:62vh;border-radius:16px 16px 0 0;border-bottom:0}
+  #tabs button{font-size:14px;padding:11px 2px}
+  .diya{transform:scale(.55)}
+  #toast{top:calc(var(--top) + 8px);font-size:15px;padding:6px 14px}
+  .f{margin:7px 0;gap:8px}.f label{font-size:15px}
+  .f input[type=range]{width:46%}.f input[type=text],.f select{width:48%}
+  #start h1{font-size:44px}#start .rangoli{width:150px;font-size:40px}#start p{font-size:15px}
+}
 </style>
 </head>
 <body>
@@ -176,25 +218,28 @@ body.ctrl #dock{display:flex}
 <aside id="panel"><div id="tabs"></div><div id="tabBody"></div></aside>
 
 <nav id="dock">
-  <div class="row" id="types"></div>
-  <div class="row" id="wishRow">
-    <input id="wish" type="text" maxlength="28" placeholder="Type a wish, e.g. Happy Diwali" autocomplete="off">
-    <button class="btn" id="bWrite">✍ Write in sky</button>
-    <button class="btn" id="bShare">🔗 Share greeting</button>
+  <div id="dtabs">
+    <button data-t="shells" class="on">Shells</button><button data-t="colours">Colours</button><button data-t="shows">Shows</button><button data-t="wish">Wish</button>
+    <button id="dClose" class="xbtn" aria-label="Close">✕</button>
   </div>
-  <div class="row" id="bar">
-    <div class="row" id="pals" style="overflow:visible;padding:0"></div>
-    <span class="sep"></span>
+  <div class="dpane on" id="p-shells"><div class="grid" id="types"></div></div>
+  <div class="dpane" id="p-colours"><div class="grid" id="pals"></div></div>
+  <div class="dpane" id="p-shows"><div class="grid wide">
     <button class="btn" id="bAuto">▶ Auto show</button>
     <button class="btn hot" id="bFinale">🎇 Finale</button>
-    <button class="btn" id="bText">🔤 Sky text</button>
-    <button class="btn" id="bVolley">💥 Volley</button>
-    <button class="btn" id="bGround">⛲ Ground fx</button>
     <button class="btn" id="bGrand">🎆 Grand show</button>
     <button class="btn" id="bToday">📅 Today's show</button>
     <button class="btn" id="bCount">⏱ Countdown</button>
-    <button class="btn" id="bClear">🧹 Clear</button>
-  </div>
+    <button class="btn" id="bVolley">💥 Volley</button>
+    <button class="btn" id="bGround">⛲ Ground fx</button>
+    <button class="btn" id="bText">🔤 Sky text</button>
+    <button class="btn" id="bClear">🧹 Clear sky</button>
+  </div></div>
+  <div class="dpane" id="p-wish"><div class="wishrow">
+    <input id="wish" type="text" maxlength="28" placeholder="Type a wish, e.g. Happy Diwali" autocomplete="off">
+    <button class="btn hot" id="bWrite">✍ Write in sky</button>
+    <button class="btn" id="bShare">🔗 Share greeting</button>
+  </div></div>
 </nav>
 
 <div id="toast"></div>
@@ -232,7 +277,7 @@ const DEFAULTS={
   mqStyle:'neon',mqColorMode:'festive',mqColor:'#ffb300',mqGlow:20,mqPos:'top',mqPulse:true,
   skyText:'HAPPY DIWALI',skyFont:FONTS[0][0],skyAuto:true,
   edge:true,edgeMode:'reactive',edgeInt:1,edgeW:180,edgeColor:'#ffa21f',frame:true,
-  stars:true,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:true,uiSound:true,samples:false,cdText:'HAPPY DIWALI!'
+  stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:true,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
 };
 const S=Object.assign({},DEFAULTS);
 try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v3')||'{}'))}catch(e){}
@@ -287,6 +332,7 @@ function drawScene(){
   if(S.skyline==='palace'){
     const bs=Math.max(.6,Math.min(W/1100,H/650)),dark='#0b0212';let seed=11;const rr=()=>(seed=(seed*16807)%2147483647)/2147483647;
     const glowG=cc.createLinearGradient(0,H-H*.3,0,H);glowG.addColorStop(0,'rgba(255,120,30,0)');glowG.addColorStop(1,'rgba(255,130,40,.38)');cc.fillStyle=glowG;cc.fillRect(0,H*.7,W,H*.3);
+    const ks=clamp(S.skyH,.15,1.2),vW=W/ks;cc.setTransform(DPR*ks,0,0,DPR*ks,0,H*DPR*(1-ks));
     const bulbs=(x1,y1,x2,y2,n)=>{for(let i=0;i<=n;i++){const f=i/n,bx=x1+(x2-x1)*f,by=y1+(y2-y1)*f;cc.fillStyle=['#ffd54f','#ff7a3d','#ff5f8d','#fff3b0'][i%4];cc.beginPath();cc.arc(bx,by,2.2*bs,0,7);cc.fill();
       cc.fillStyle='rgba(255,190,80,.22)';cc.beginPath();cc.arc(bx,by,6*bs,0,7);cc.fill()}};
     const arch=(x,y,w,h)=>{cc.fillStyle='rgba(255,176,60,.9)';cc.beginPath();cc.moveTo(x,y+h);cc.lineTo(x,y+w/2);cc.arc(x+w/2,y+w/2,w/2,Math.PI,0);cc.lineTo(x+w,y+h);cc.fill()};
@@ -294,7 +340,7 @@ function drawScene(){
       cc.beginPath();cc.arc(cx,by-hh-r*.5,r*.2,0,7);cc.fill();cc.fillRect(cx-1.2,by-hh-r*.5-r*.55,2.4,r*.55);
       cc.fillStyle='rgba(255,170,70,.22)';cc.fillRect(cx-r,by-2,r*2,2);bulbs(cx-r,by-1,cx+r,by-1,Math.round(r/(9*bs)))};
     let x=-20;
-    while(x<W){
+    while(x<vW){
       const bw=(70+rr()*90)*bs,bh=(H*.07+rr()*H*.11),kind=rr();
       cc.fillStyle=dark;cc.fillRect(x,H-bh,bw,bh);cc.fillStyle='rgba(255,150,60,.18)';cc.fillRect(x,H-bh,bw,2);
       for(let wy=H-bh+12*bs;wy<H-30*bs;wy+=30*bs)for(let wx=x+10*bs;wx<x+bw-16*bs;wx+=24*bs)if(rr()>.35)arch(wx,wy,12*bs,18*bs);
@@ -304,13 +350,14 @@ function drawScene(){
       x+=bw+rr()*8;
     }
     // grand temple in the centre
-    const cx=W/2,tw=190*bs,ty=H;let w=tw,y=ty;cc.fillStyle=dark;
+    const cx=vW/2,tw=190*bs,ty=H;let w=tw,y=ty;cc.fillStyle=dark;
     for(let i=0;i<6;i++){const h=(i===0?70:34)*bs;cc.fillRect(cx-w/2,y-h,w,h);cc.fillStyle='rgba(255,150,60,.22)';cc.fillRect(cx-w/2,y-h,w,2);cc.fillStyle=dark;y-=h;w*=.8}
     cc.beginPath();cc.moveTo(cx-w/2,y);cc.quadraticCurveTo(cx-w*.45,y-70*bs,cx,y-95*bs);cc.quadraticCurveTo(cx+w*.45,y-70*bs,cx+w/2,y);cc.fill();
     cc.fillRect(cx-1.5,y-95*bs-26*bs,3,26*bs);cc.fillStyle='#ffb300';cc.beginPath();cc.arc(cx,y-95*bs-28*bs,4*bs,0,7);cc.fill();
     cc.fillStyle=dark;
     arch(cx-14*bs,H-62*bs,28*bs,52*bs);
     for(let i=1;i<6;i++){const ww=tw*Math.pow(.8,i);bulbs(cx-ww/2,H-70*bs-(i-1)*34*bs,cx+ww/2,H-70*bs-(i-1)*34*bs,Math.round(ww/(12*bs)))}
+    cc.setTransform(DPR,0,0,DPR,0,0);
   }else if(S.skyline==='city'){
     let x=-10;const base=H;let seed=7;const rr=()=>(seed=(seed*16807)%2147483647)/2147483647;
     while(x<W){
@@ -453,9 +500,11 @@ const Snd={
     }
   },
   async loadSamples(){
-    if(!this.ac||this.samplesLoading)return;this.samplesLoading=true;this.samples=[];
-    for(let i=1;i<=4;i++){try{const r=await fetch(`sounds/boom${i}.mp3`);if(!r.ok)continue;this.samples.push(await this.ac.decodeAudioData(await r.arrayBuffer()))}catch(e){}}
-    toast(this.samples.length?`Loaded ${this.samples.length} recorded boom sound(s)`:'No recordings found in the sounds/ folder – using synthesized booms');
+    if(!this.ac||this.samplesLoading||location.protocol==='file:')return;this.samplesLoading=true;this.samples=[];
+    try{const m=await (await fetch('sounds/manifest.json')).json();
+      for(const f of (m.booms||[]).slice(0,12)){try{const r=await fetch('sounds/'+encodeURIComponent(f));if(r.ok)this.samples.push(await this.ac.decodeAudioData(await r.arrayBuffer()))}catch(e){}}
+    }catch(e){}
+    if(this.samples.length)toast(`Loaded ${this.samples.length} recorded boom sound(s)`);
   },
   startAmbience(){
     const ac=this.ac;if(this.ambG)return;const out=this.ambG=ac.createGain();out.gain.value=0;out.connect(this.master);
@@ -1116,7 +1165,7 @@ const SCHEMA={
     ['h','Volume'],['sound','check','Sound on'],['vol','range','Master volume',0,1,.01],['sfxVol','range','Effects volume',0,1,.01],['musicVol','range','Music volume',0,1,.01],
     ['h','Sound style'],['soundStyle','select','Style',[['real','Realistic'],['arcade','Arcade 8-bit'],['bells','Temple bells']]],
     ['h','Layers'],['boomMode','select','Boom',[['auto','Auto (sometimes double)'],['single','Single boom'],['double','Double boom']]],['whistle','check','Launch whistle'],['thump','check','Mortar launch thump'],['boom','check','Explosion boom'],['crackle','check','Crackle, fizz & sizzle'],
-    ['crowd','check','Crowd ooh / aah / cheers'],['ambience','check','Night ambience (wind & crickets)'],['uiSound','check','Button click sounds'],['samples','check','Use recordings from /sounds (if present)'],['realDelay','check','Realistic sound delay'],['dhol','check','Dhol drums on finale'],['music','check','Festive music (generative)'],['musicStyle','select','Music style',[['diwali','Diwali raga & tabla'],['ambient','Ambient pads']]],
+    ['crowd','check','Crowd ooh / aah / cheers'],['ambience','check','Night ambience (wind & crickets)'],['uiSound','check','Button click sounds'],['samples','check','Use recorded booms from sounds/ folder'],['realDelay','check','Realistic sound delay'],['dhol','check','Dhol drums on finale'],['music','check','Festive music (generative)'],['musicStyle','select','Music style',[['diwali','Diwali raga & tabla'],['ambient','Ambient pads']]],
     ['btn','🔔 Test sound','test']
   ],
   Text:[
@@ -1136,7 +1185,7 @@ const SCHEMA={
   ],
   Scene:[
     ['h','Backdrop'],['theme','select','Sky',[['diwali','Diwali night'],['night','Night'],['dusk','Dusk'],['void','Deep space'],['aurora','Aurora']]],
-    ['skyline','select','Horizon',[['palace','Temple & palaces'],['city','City skyline'],['hills','Hills'],['none','Open sky']]],['stars','check','Stars'],['moon','check','Moon'],['cityFront','check','Skyline in front of fireworks'],
+    ['skyline','select','Horizon',[['palace','Temple & palaces'],['city','City skyline'],['hills','Hills'],['none','Open sky']]],['skyH','range','Skyline height',.15,1,.05],['stars','check','Stars'],['moon','check','Moon'],['cityFront','check','Skyline in front of fireworks'],
     ['h','Diwali decorations'],['diyas','check','Row of diyas (clay lamps)'],['lanterns','check','Hanging lanterns'],
     ['h','Data'],['btn','↺ Reset all settings','reset']
   ]
@@ -1145,6 +1194,7 @@ let curTab='Show';
 function buildPanel(){
   const tabs=$('#tabs'),body=$('#tabBody');tabs.innerHTML='';
   for(const t of Object.keys(SCHEMA)){const b=document.createElement('button');b.textContent=t;b.className=t===curTab?'on':'';b.onclick=()=>{curTab=t;buildPanel()};tabs.appendChild(b)}
+  {const x=document.createElement('button');x.textContent='✕';x.className='xbtn';x.setAttribute('aria-label','Close');x.onclick=()=>$('#panel').classList.remove('open');tabs.appendChild(x)}
   body.innerHTML='';
   for(const r of SCHEMA[curTab]){
     const [k,type,label,a,b,c,wide]=r;
@@ -1165,7 +1215,7 @@ function set(k,v){
   S[k]=v;save();
   if(k.startsWith('mq'))applyMarquee();
   if(['vol','sfxVol','musicVol','sound','music'].includes(k)){Snd.apply();syncMute();if(k==='music'&&v)Snd.init()}
-  if(['theme','skyline','stars','moon'].includes(k))drawScene();
+  if(['theme','skyline','stars','moon','skyH'].includes(k))drawScene();
   if(k==='diyas'||k==='lanterns')buildDeco();
   if(k==='cityFront')applyMisc();
   if(['ambience','uiSound','samples'].includes(k)){Snd.apply();if(k==='samples'&&v){Snd.init();Snd.loadSamples()}}
@@ -1179,17 +1229,16 @@ const actions={
 function buildDock(){
   const tr=$('#types');tr.innerHTML='';
   Object.entries(TYPES).forEach(([k,t],i)=>{
-    const b=document.createElement('button');b.className='chip'+(S.type===k?' on':'');b.innerHTML=(i<9?`<b>${i+1}</b>`:'')+t.n;
-    b.onclick=()=>{S.type=k;save();buildDock()};tr.appendChild(b)});
+    const b=document.createElement('button');b.className='chip'+(S.type===k?' on':'');b.textContent=t.n;
+    b.onclick=()=>{S.type=k;save();buildDock();toast(t.n)};tr.appendChild(b)});
   const pr=$('#pals');pr.innerHTML='';
   for(const [k,p] of Object.entries(PALS)){
-    const b=document.createElement('button');b.className='sw'+(S.pal===k?' on':'');b.style.background=p.c;b.style.color=p.c.startsWith('#')?p.c:'#fff';b.title=p.n;
-    b.onclick=()=>{S.pal=k;save();buildDock()};pr.appendChild(b)}
-  const on=tr.querySelector('.on');if(on)on.scrollIntoView({block:'nearest',inline:'center'});
+    const b=document.createElement('button');b.className='chip pal'+(S.pal===k?' on':'');b.innerHTML=`<i style="background:${p.c}"></i>${p.n}`;
+    b.onclick=()=>{S.pal=k;save();buildDock();toast(p.n)};pr.appendChild(b)}
 }
 function buildDeco(){
   const d=$('#diyas');d.innerHTML='';d.style.display=S.diyas?'flex':'none';
-  const n=Math.max(6,Math.floor(W/84));for(let i=0;i<n;i++){const e=document.createElement('i');e.className='diya';e.style.setProperty('--d',(-Math.random()*.3).toFixed(2)+'s');d.appendChild(e)}
+  const n=Math.max(5,Math.floor(W/(W<640?64:84)));for(let i=0;i<n;i++){const e=document.createElement('i');e.className='diya';e.style.setProperty('--d',(-Math.random()*.3).toFixed(2)+'s');d.appendChild(e)}
   const l=$('#lanterns');l.innerHTML='';l.style.display=S.lanterns?'block':'none';
   [[1.2,26,0],[6.5,52,-1.2],[93,26,-.6],[87.5,52,-1.8]].forEach(([x,len,dl])=>{const e=document.createElement('div');e.className='lantern';e.style.left=x+'%';e.style.setProperty('--len',len+'px');e.style.setProperty('--d',dl+'s');e.innerHTML='<i></i>';l.appendChild(e)});
 }
@@ -1210,14 +1259,16 @@ fxc.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY});
 const up=()=>{down=false};fxc.addEventListener('pointerup',up);fxc.addEventListener('pointercancel',up);
 setInterval(()=>{if(down&&!GROUND.includes(S.type)&&S.type!=='text')launch(S.type,px,py,{})},170);
 
-$('#bSettings').onclick=()=>$('#panel').classList.toggle('open');
+$('#bSettings').onclick=()=>{document.body.classList.remove('ctrl');$('#panel').classList.toggle('open')};
 $('#bMute').onclick=()=>{Snd.init();set('sound',!S.sound);toast(S.sound?'Sound on':'Muted');if(curTab==='Sound')buildPanel()};
 $('#bAuto').onclick=()=>{S.autoShow=!S.autoShow;save();syncAuto();toast(S.autoShow?'Auto show on':'Auto show off');if(curTab==='Show')buildPanel()};
 $('#bFinale').onclick=finale;
 $('#bText').onclick=actions.sky;
 $('#bVolley').onclick=()=>volley(GROUND.includes(S.type)||S.type==='text'||S.type==='bomb'?'random':S.type,5);
 $('#bClear').onclick=()=>{P.length=R.length=FL.length=EM.length=TQ.length=0;SM.length=0;showBusy=cdBusy=false;$('#cd').className='';ctx.clearRect(0,0,W,H)};
-$('#bControls').onclick=()=>document.body.classList.toggle('ctrl');
+$('#bControls').onclick=()=>{$('#panel').classList.remove('open');document.body.classList.toggle('ctrl')};
+document.querySelectorAll('#dtabs [data-t]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#dtabs [data-t]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.dpane').forEach(q=>q.classList.toggle('on',q.id==='p-'+b.dataset.t))});
+$('#dClose').onclick=()=>document.body.classList.remove('ctrl');
 $('#bGround').onclick=()=>launch(pick(GROUND),rnd(W*.15,W*.85),H*.4,{});
 $('#bGrand').onclick=grandShow;$('#bToday').onclick=todaysShow;$('#bCount').onclick=countdown;
 const wishText=()=>($('#wish').value||S.skyText).trim().slice(0,28);
@@ -1245,7 +1296,7 @@ addEventListener('keydown',e=>{
   else if(k==='h')hideUI(!document.body.classList.contains('hideui'));
   else if(k==='a')$('#bAuto').click();
   else if(k==='g')finale();
-  else if(k==='c')document.body.classList.toggle('ctrl');
+  else if(k==='c')$('#bControls').click();
   else if(k==='t')actions.sky();
   else if(k==='p'){set('showFps',!S.showFps);if(curTab==='Show')buildPanel()}
   else if(k==='escape')$('#panel').classList.remove('open');
