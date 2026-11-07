@@ -57,3 +57,6 @@ Auto show, festive music and night ambience are now off by default; the sky only
 
 ## v10 – shells fire when picked
 Picking a shell in Controls → Shells now fires it immediately where you can see it. Low-placed items (laddi, sutli bomb, flower pot, sparkler, chakri, candle, sky text) close the sheet first so they are not hidden behind it; picking a colour fires a preview in that colour.
+
+## v12 – unobtrusive cracker info
+Firing a cracker no longer pops up a text card over the sky. A small half-transparent **ⓘ** appears in the top-left corner; tap it to read the cracker's local names, look and effect, tap again (or the sky) to close.

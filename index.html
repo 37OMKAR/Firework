@@ -218,9 +218,12 @@ body.ctrl #bControls,body.hideui #bControls{display:none}
 .cats{display:flex;gap:6px;overflow-x:auto;padding:0 0 10px;scrollbar-width:none}.cats::-webkit-scrollbar{display:none}
 .pill{flex:0 0 auto;appearance:none;border:1.5px solid rgba(255,196,102,.45);background:rgba(66,22,54,.6);color:#fff;border-radius:999px;padding:7px 14px;font:inherit;font-weight:700;font-size:14px;cursor:pointer}
 .pill.on{background:#ffb300;color:#2b0f08;border-color:#ffd54f}
-#ckcard{position:fixed;left:50%;transform:translateX(-50%);top:calc(max(12px,env(safe-area-inset-top)) + 54px);z-index:35;width:min(92vw,470px);padding:12px 16px;border-radius:14px;
-  background:rgba(22,6,18,.86);border:1px solid rgba(255,196,102,.55);color:#f6e7c8;pointer-events:none;opacity:0;transition:opacity .25s;font-size:14px;line-height:1.35}
-#ckcard.show{opacity:1}
+#ckInfo{position:fixed;left:max(14px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:36;width:40px;height:40px;border-radius:50%;display:none;place-items:center;padding:0;
+  background:rgba(20,6,16,.7);border:1.5px solid rgba(255,196,102,.7);color:#ffe3a3;font:italic 700 22px/1 'Yatra One','Hind',Georgia,serif;cursor:pointer;opacity:.5;transition:opacity .2s}
+#ckInfo.show{display:grid}#ckInfo:hover,#ckInfo:focus-visible,#ckInfo.on{opacity:1}
+#ckcard{position:fixed;left:max(14px,env(safe-area-inset-left));top:calc(max(12px,env(safe-area-inset-top)) + 50px);z-index:35;width:min(86vw,400px);padding:12px 16px;border-radius:14px;
+  background:rgba(22,6,18,.9);border:1px solid rgba(255,196,102,.55);color:#f6e7c8;display:none;font-size:14px;line-height:1.35;cursor:pointer}
+#ckcard.show{display:block}
 #ckcard b{display:block;color:#ffd87a;font-size:17px;font-family:'Yatra One','Hind',serif;font-weight:400}
 #ckcard .alt{display:block;color:#ffb74d;font-size:13px;margin-bottom:4px}
 #ckcard p{margin:2px 0}#ckcard .fx{color:#fff3c4}
@@ -282,7 +285,8 @@ body.ctrl #bControls,body.hideui #bControls{display:none}
 </nav>
 
 <div id="toast"></div>
-<div id="ckcard"></div>
+<button id="ckInfo" aria-label="About this cracker" title="About this cracker">i</button>
+<div id="ckcard" role="dialog" aria-label="Cracker details"></div>
 <div id="cd"></div>
 
 <div id="start">
@@ -1287,9 +1291,13 @@ const CKF={
   pistol:xp(pistolProp),caps:xp(capsProp),snake:xp(snakeProp),pops:xp(popsThrow),sparkler:sparklerCk,fountain:xp(fountainProp),spinner:xp(spinnerProp),bomb:xp(bombProp),
   sutli:(x)=>sutli(x),ladi:(x,y,p)=>laddi(x,p),mat:xp(matProp),rocket:xp(rocketProp),candle:(x,y)=>candle(x,y,{}),flash:xp(flashProp),siren:xp(sirenProp),smoke:xp(smokeProp)
 };
-let ckT=0;
-function showCkCard(r){const el=$('#ckcard');el.textContent='';const mk=(t,c,tx)=>{const e=document.createElement(t);if(c)e.className=c;e.textContent=tx;return e};
-  el.append(mk('b','',`${r.no}. ${r.n}`),mk('span','alt',r.a),mk('p','',r.v),mk('p','fx','Effect: '+r.e));el.classList.add('show');clearTimeout(ckT);ckT=setTimeout(()=>el.classList.remove('show'),7500)}
+let ckT=0,ckHide=0,ckCur=null;
+function fillCkCard(r){const el=$('#ckcard');el.textContent='';const mk=(t,c,tx)=>{const e=document.createElement(t);if(c)e.className=c;e.textContent=tx;return e};
+  el.append(mk('b','',`${r.no}. ${r.n}`),mk('span','alt',r.a),mk('p','',r.v),mk('p','fx','Effect: '+r.e))}
+function closeCkCard(){$('#ckcard').classList.remove('show');$('#ckInfo').classList.remove('on');clearTimeout(ckT)}
+function showCkCard(r){ckCur=r;closeCkCard();$('#ckInfo').classList.add('show');clearTimeout(ckHide);ckHide=setTimeout(()=>{$('#ckInfo').classList.remove('show');closeCkCard()},30000)}
+$('#ckInfo').onclick=()=>{const c=$('#ckcard');if(c.classList.contains('show')){closeCkCard();return}if(!ckCur)return;fillCkCard(ckCur);c.classList.add('show');$('#ckInfo').classList.add('on');clearTimeout(ckT);ckT=setTimeout(closeCkCard,15000)};
+$('#ckcard').onclick=closeCkCard;
 function runCracker(r,tx,ty){showCkCard(r);const x=clamp(tx,60,W-60);const f=CKF[r.b];if(f)f(x,ty,r.p)}
 /* catalogue text follows the table supplied for this project */
 const CK=[
@@ -1798,6 +1806,7 @@ fxc.addEventListener('pointerdown',e=>{
   if($('#start').classList.contains('gone')===false)return;
   down=true;px=e.clientX;py=e.clientY;holdT=0;fxc.setPointerCapture(e.pointerId);
   if(isGround(S.type)||S.type==='text')document.body.classList.remove('ctrl');
+  closeCkCard();
   launch(S.type,px,py);
 });
 fxc.addEventListener('pointermove',e=>{px=e.clientX;py=e.clientY});
