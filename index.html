@@ -307,7 +307,7 @@ if(window.ResizeObserver)new ResizeObserver(setDockH).observe($('#dock'));
 addEventListener('load',setDockH);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(setDockH);
 
 /* ---------- scene: sky, stars, moon, skyline ---------- */
-const THEMES={diwali:['#02010a','#0d0720','#3a1a2a'],night:['#010208','#0a1030','#1a2250'],dusk:['#0a0520','#3a1a55','#b2476a'],void:['#000000','#05030c','#120a22'],aurora:['#010a0c','#05222a','#0e5a55']};
+const THEMES={diwali:['#010107','#060514','#1c0f1c'],night:['#010208','#0a1030','#1a2250'],dusk:['#0a0520','#3a1a55','#b2476a'],void:['#000000','#05030c','#120a22'],aurora:['#010a0c','#05222a','#0e5a55']};
 let starList=[];
 function drawScene(){
   const sc=sky.getContext('2d');sc.setTransform(DPR,0,0,DPR,0,0);sc.clearRect(0,0,W,H);
@@ -331,7 +331,7 @@ function drawScene(){
   const cc=cityc.getContext('2d');cc.setTransform(DPR,0,0,DPR,0,0);cc.clearRect(0,0,W,H);
   if(S.skyline==='palace'){
     const bs=Math.max(.6,Math.min(W/1100,H/650)),dark='#0b0212';let seed=11;const rr=()=>(seed=(seed*16807)%2147483647)/2147483647;
-    const glowG=cc.createLinearGradient(0,H-H*.3,0,H);glowG.addColorStop(0,'rgba(255,120,30,0)');glowG.addColorStop(1,'rgba(255,130,40,.2)');cc.fillStyle=glowG;cc.fillRect(0,H*.7,W,H*.3);
+    const glowG=cc.createLinearGradient(0,H-H*.3,0,H);glowG.addColorStop(0,'rgba(255,120,30,0)');glowG.addColorStop(1,'rgba(255,130,40,.13)');cc.fillStyle=glowG;cc.fillRect(0,H*.7,W,H*.3);
     const ks=clamp(S.skyH,.15,1.2),vW=W/ks;cc.setTransform(DPR*ks,0,0,DPR*ks,0,H*DPR*(1-ks));
     const bulbs=(x1,y1,x2,y2,n)=>{for(let i=0;i<=n;i++){const f=i/n,bx=x1+(x2-x1)*f,by=y1+(y2-y1)*f;cc.fillStyle=['#ffd54f','#ff7a3d','#ff5f8d','#fff3b0'][i%4];cc.beginPath();cc.arc(bx,by,2.2*bs,0,7);cc.fill();
       cc.fillStyle='rgba(255,190,80,.22)';cc.beginPath();cc.arc(bx,by,6*bs,0,7);cc.fill()}};
@@ -725,10 +725,9 @@ let mqPulse=0,mqBurstCol='#ff4fd8';
 function glowBurst(x,y,c,str){
   const col=`hsl(${c[0]|0} ${c[1]}% ${Math.min(75,c[2]+8)}%)`;
   if(S.edge){
-    const wl=Math.max(.15,1-x/(W*.65)),wr=Math.max(.15,1-(W-x)/(W*.65)),wt=Math.max(.1,.5*(1-y/(H*.7)));
+    const wl=Math.max(.15,1-x/(W*.65)),wr=Math.max(.15,1-(W-x)/(W*.65)),wt=0;
     if(wl*str>edge.l*.6){edge.l=Math.max(edge.l,wl*str);edge.cl=col}
     if(wr*str>edge.r*.6){edge.r=Math.max(edge.r,wr*str);edge.cr=col}
-    if(wt*str>edge.t*.6){edge.t=Math.max(edge.t,wt*str);edge.ct=col}
     if(str>.35){edge.b=Math.max(edge.b,.25*str);edge.cb=col}
     edge.f=Math.max(edge.f,str*.9);edge.fc=col;
   }
@@ -957,7 +956,7 @@ function drawSmoke(dt,wind){
     p.x+=(p.vx+wind*8)*dt;p.y+=p.vy*dt;p.r+=.06*dt;p.ti*=Math.pow(.955,dt);
     const k=p.age/p.life,d=p.r*2*sx,px=p.x*sx-d/2,py=p.y*sx-d/2;
     sctx.globalCompositeOperation='source-over';sctx.globalAlpha=Math.min(1,p.age/40)*(1-k)*.12;sctx.drawImage(SMK,px,py,d,d);
-    if(p.ti>.03){sctx.globalCompositeOperation='lighter';sctx.globalAlpha=p.ti*.22*(1-k);sctx.drawImage(sprite(p.tc[0],p.tc[1],72),px,py,d,d)}
+    if(p.ti>.03){sctx.globalCompositeOperation='lighter';sctx.globalAlpha=p.ti*.1*(1-k);sctx.drawImage(sprite(p.tc[0],p.tc[1],56),px,py,d,d)}
   }
   sctx.globalAlpha=1;sctx.globalCompositeOperation='source-over';
 }
@@ -1018,7 +1017,7 @@ function frame(now){
   ctx.globalCompositeOperation='lighter';
   // flashes: sky lights up in the shell's colour
   for(let i=FL.length-1;i>=0;i--){const f=FL[i];f.t+=dt;const k=f.t/16;if(k>=1){FL.splice(i,1);continue}
-    ctx.globalAlpha=f.a*(1-k)*(1-k)*.4;const fr=f.r*.8;ctx.drawImage(sprite(f.c[0],f.c[1],80),f.x-fr,f.y-fr,fr*2,fr*2)}
+    ctx.globalAlpha=f.a*(1-k)*(1-k)*.24;const fr=f.r*.65;ctx.drawImage(sprite(f.c[0],f.c[1],60),f.x-fr,f.y-fr,fr*2,fr*2)}
   // rockets: glowing head with a fading comet tail
   for(let i=R.length-1;i>=0;i--){
     const r=R[i];r.t+=dt;const u=Math.min(1,r.t/r.T),e=1-Math.pow(1-u,2.2);
