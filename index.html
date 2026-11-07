@@ -274,19 +274,19 @@ const FONTS=[['Impact, Haettenschweiler, "Arial Black", "Noto Sans Devanagari", 
   ['"Comic Sans MS", "Chalkboard SE", sans-serif','Playful']];
 const DEFAULTS={
   type:'random',pal:'diwali',
-  autoShow:true,autoRate:1,volley:true,density:1,size:1,gravity:1,wind:0,speed:1,trail:7,
+  autoShow:false,autoRate:1,volley:true,density:1,size:1,gravity:1,wind:0,speed:1,trail:7,
   bloom:true,shake:true,flash:true,sparkleTrail:true,
-  sound:true,vol:.8,sfxVol:.9,musicVol:.5,soundStyle:'real',whistle:true,boom:true,crackle:true,thump:true,crowd:true,music:true,musicStyle:'diwali',realDelay:true,dhol:true,
+  sound:true,vol:.8,sfxVol:.9,musicVol:.5,soundStyle:'real',whistle:true,boom:true,crackle:true,thump:true,crowd:true,music:false,musicStyle:'diwali',realDelay:true,dhol:true,
   mq:false,mqText:'HAPPY DIWALI from Om',mqSpeed:70,mqSize:16,mqFont:FONTS[1][0],
   mqStyle:'neon',mqColorMode:'festive',mqColor:'#ffb300',mqGlow:6,mqPos:'top',mqPulse:false,
   skyText:'HAPPY DIWALI',skyFont:FONTS[0][0],skyAuto:true,
   edge:true,edgeMode:'reactive',edgeInt:.45,edgeW:110,edgeColor:'#ffa21f',frame:false,
-  stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:true,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
+  stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:false,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
 };
 const S=Object.assign({},DEFAULTS);
-try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v5')||'{}'))}catch(e){}
+try{Object.assign(S,JSON.parse(localStorage.getItem('fw-studio-v6')||'{}'))}catch(e){}
 let saveT=0;
-function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v5',JSON.stringify(S))}catch(e){}},250)}
+function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v6',JSON.stringify(S))}catch(e){}},250)}
 
 /* =====================================================================
    canvas setup

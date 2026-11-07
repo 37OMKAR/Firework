@@ -44,3 +44,6 @@ Only a **Full screen** button (top right) and a **Controls** button (bottom cent
 
 ## v7 – sound
 Booms are layered (sharp crack + click, body, sub-bass, long rumbling tail, rolling echoes, crackle tail). Measured by offline rendering: louder boom, ~14 dB stronger late tail than before. A master limiter + soft clipper keeps stacked finales from clipping (worst-case stack peak 1.40 → 0.92, zero clipped samples).
+
+## v8 – quiet by default
+Auto show, festive music and night ambience are now off by default; the sky only fires when you tap. Turn them on in Controls → Shows (Auto show) and Settings → Sound.
