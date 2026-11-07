@@ -67,3 +67,7 @@ Firing a cracker no longer pops up a text card over the sky. A small half-transp
 - **Look:** hydro = water splash, maroons/atom = dust + big shockwave and shake, chocolate = brown debris, chinese = red/gold sparks.
 - **Languages:** English · हिन्दी · मराठी — pick on the welcome screen or in Settings → Show. Everything is translated (menus, settings, shells, all 64 cracker names and info cards, messages); the language is remembered and defaults to your browser language.
 - **Clear icon:** small eraser button at the top-left clears the whole sky.
+
+## v14
+- Language dropdown: English (default) + 14 more (Hindi, Marathi, Bengali, Tamil, Telugu, Gujarati, Kannada, Malayalam, Punjabi, Odia, Assamese, Urdu (RTL), Sanskrit, ...). The 12 new languages translate the main interface; settings details and long cracker descriptions fall back to English. Native review is recommended.
+- Neon frame border is on by default (changeable in Glow settings). Storage key is now `fw-studio-v7`; v6 settings migrate with the frame reset to the new default.
