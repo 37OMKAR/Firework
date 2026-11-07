@@ -228,6 +228,17 @@ body.ctrl #bControls,body.hideui #bControls{display:none}
 #ckcard .alt{display:block;color:#ffb74d;font-size:13px;margin-bottom:4px}
 #ckcard p{margin:2px 0}#ckcard .fx{color:#fff3c4}
 @media (max-width:640px){#dtabs button{font-size:12.5px;padding:11px 1px}}
+
+/* ===== v13: clear icon + language pills ===== */
+#clearBtn{position:fixed;left:max(14px,env(safe-area-inset-left));top:max(12px,env(safe-area-inset-top));z-index:36;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;padding:0;
+  background:rgba(20,6,16,.7);border:1.5px solid rgba(255,196,102,.6);color:#ffe3a3;cursor:pointer;opacity:.75;transition:opacity .2s,transform .15s}
+#clearBtn:hover,#clearBtn:focus-visible{opacity:1}#clearBtn:active{transform:scale(.92)}
+body.hideui #clearBtn{display:none}
+#ckInfo{left:calc(max(14px,env(safe-area-inset-left)) + 50px)}
+#ckcard{top:calc(max(12px,env(safe-area-inset-top)) + 52px)}
+.langrow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.langrow button{appearance:none;border:1.5px solid rgba(255,196,102,.55);background:rgba(66,22,54,.6);color:#fff;border-radius:999px;padding:8px 18px;font:inherit;font-weight:700;font-size:16px;cursor:pointer}
+.langrow button.on{background:#ffb300;color:#2b0f08;border-color:#ffd54f}
 </style>
 </head>
 <body>
@@ -285,20 +296,22 @@ body.ctrl #bControls,body.hideui #bControls{display:none}
 </nav>
 
 <div id="toast"></div>
+<button id="clearBtn" aria-label="Clear screen" title="Clear screen"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg></button>
 <button id="ckInfo" aria-label="About this cracker" title="About this cracker">i</button>
 <div id="ckcard" role="dialog" aria-label="Cracker details"></div>
 <div id="cd"></div>
 
 <div id="start">
   <div class="rangoli">🪔</div>
-  <h1>Happy Diwali</h1>
+  <div id="langRow" class="langrow" role="group" aria-label="Language"></div>
+  <h1 id="title">Happy Diwali</h1>
   <h2>शुभ दीपावली</h2>
-  <p>Light up the festival sky – anars, chakris, laddis, rockets and sky-writing, with dhol, temple bells and the crackle of crackers.</p>
+  <p id="blurb">Light up the festival sky – anars, chakris, laddis, rockets and sky-writing, with dhol, temple bells and the crackle of crackers.</p>
   <button class="btn hot big" id="goSound">🔊 Start with sound</button>
   <button class="btn big" id="goMute">Start muted</button>
   <p id="greet" style="font-size:20px;color:#ffe9a8;font-weight:700"></p>
-  <div class="credit"><span>Made with care by the</span><b>Climate Risk Department</b><span>Enjoy this fun game!</span></div>
-  <p style="font-size:15px">Tap or hold on the sky · ☰ Controls for shells, colours & shows · Space = random shell · G = finale · H = hide UI</p>
+  <div class="credit"><span id="c1">Made with care by the</span><b>Climate Risk Department</b><span id="c2">Enjoy this fun game!</span></div>
+  <p id="hint" style="font-size:15px">Tap or hold on the sky · ☰ Controls for shells, colours & shows · Space = random shell · G = finale · H = hide UI</p>
 </div>
 
 <script>
@@ -310,10 +323,12 @@ body.ctrl #bControls,body.hideui #bControls{display:none}
 const $=s=>document.querySelector(s);
 const rnd=(a,b)=>a+Math.random()*(b-a), pick=a=>a[Math.random()*a.length|0];
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
-const FONTS=[['Impact, Haettenschweiler, "Arial Black", "Noto Sans Devanagari", sans-serif','Impact'],['"Yatra One", "Noto Sans Devanagari", serif','Festive (Yatra One)'],['system-ui, "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif','Clean'],
+const FONTS=[['Impact, Haettenschweiler, "Arial Black", "Hind", "Noto Sans Devanagari", sans-serif','Impact'],['"Yatra One", "Noto Sans Devanagari", serif','Festive (Yatra One)'],['system-ui, "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif','Clean'],
   ['Georgia, serif','Serif'],['"Courier New", monospace','Mono'],['"Brush Script MT", "Segoe Script", cursive','Script'],
   ['"Comic Sans MS", "Chalkboard SE", sans-serif','Playful']];
+const detectLang=()=>{const n=String((navigator.languages&&navigator.languages[0])||navigator.language||'en').toLowerCase();return n.startsWith('hi')?'hi':n.startsWith('mr')?'mr':'en'};
 const DEFAULTS={
+  lang:detectLang(),
   type:'random',pal:'diwali',
   autoShow:false,autoRate:1,volley:true,density:1,size:1,gravity:1,wind:0,speed:1,trail:7,
   bloom:true,shake:true,flash:true,sparkleTrail:true,
@@ -322,10 +337,62 @@ const DEFAULTS={
   mqStyle:'neon',mqColorMode:'festive',mqColor:'#ffb300',mqGlow:6,mqPos:'top',mqPulse:false,
   skyText:'HAPPY DIWALI',skyFont:FONTS[0][0],skyAuto:true,
   edge:true,edgeMode:'reactive',edgeInt:.45,edgeW:110,edgeColor:'#ffa21f',frame:false,
-  stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:false,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
+  stars:true,skyH:.42,skyline:'palace',moon:false,theme:'diwali',lanterns:false,diyas:true,quality:'auto',showFps:false,smoke:true,cityFront:true,launchSpeed:'normal',boomMode:'auto',ambience:false,haptics:true,hapPow:1,uiSound:true,samples:true,cdText:'HAPPY DIWALI!'
 };
 const S=Object.assign({},DEFAULTS);
 const hasOwn=(o,k)=>Object.prototype.hasOwnProperty.call(o,k);
+/* ================= languages: English · हिन्दी · मराठी ================= */
+const LIDX={hi:0,mr:1};
+const TR={
+'⛶ Full screen':['⛶ फ़ुल स्क्रीन','⛶ फुल स्क्रीन'],'⚙ Controls':['⚙ कंट्रोल','⚙ नियंत्रण'],
+'Happy Diwali':['दिवाली की शुभकामनाएँ','दिवाळीच्या हार्दिक शुभेच्छा'],
+'Light up the festival sky – anars, chakris, laddis, rockets and sky-writing, with dhol, temple bells and the crackle of crackers.':['त्योहार के आसमान को रोशन करें – अनार, चकरी, लड़ी, रॉकेट और आसमान में लिखावट, ढोल, मंदिर की घंटियों और पटाखों की गूँज के साथ।','सणाचे आकाश उजळवा – अनार, भुईचक्र, लड, रॉकेट आणि आकाशातील लिखाण, ढोल, मंदिराच्या घंटा आणि फटाक्यांच्या आवाजासह.'],
+'🔊 Start with sound':['🔊 आवाज़ के साथ शुरू करें','🔊 आवाजासह सुरू करा'],'Start muted':['बिना आवाज़ के शुरू करें','आवाजाशिवाय सुरू करा'],
+'Made with care by the':['बड़े मन से बनाया गया —','मनापासून तयार केले —'],'Enjoy this fun game!':['इस मज़ेदार खेल का आनंद लें!','या मजेदार खेळाचा आनंद घ्या!'],
+'Tap or hold on the sky · ☰ Controls for shells, colours & shows · Space = random shell · G = finale · H = hide UI':['आसमान पर टैप करें या दबाए रखें · ☰ कंट्रोल में आतिशबाज़ी, रंग और शो · Space = रैंडम शेल · G = फिनाले · H = मेनू छिपाएँ','आकाशावर टॅप करा किंवा दाबून ठेवा · ☰ नियंत्रणात आतषबाजी, रंग आणि शो · Space = यादृच्छिक शेल · G = फिनाले · H = मेनू लपवा'],
+'Language':['भाषा','भाषा'],'Clear screen':['स्क्रीन साफ़ करें','स्क्रीन साफ करा'],'Sky cleared':['आसमान साफ़','आकाश साफ'],
+'Shells':['आतिशबाज़ी','आतषबाजी'],'Crackers':['पटाखे','फटाके'],'Colours':['रंग','रंग'],'Shows':['शो','शो'],'Wish':['शुभकामना','शुभेच्छा'],
+'All 64':['सभी 64','सर्व 64'],'Sparklers':['फुलझड़ियाँ','फुलबाज्या'],'Fountains':['अनार / फव्वारे','अनार / कारंजे'],'Spinners':['चकरियाँ','भुईचक्रे'],'Bombs':['बम','बॉम्ब'],'Ladis':['लड़ियाँ','लडी'],'Rockets':['रॉकेट','रॉकेट'],'Pops & novelty':['पटपट और नए खिलौने','फटफट आणि नावीन्य'],
+'▶ Auto show':['▶ ऑटो शो','▶ ऑटो शो'],'⏸ Auto show':['⏸ ऑटो शो','⏸ ऑटो शो'],'🎇 Finale':['🎇 फिनाले','🎇 फिनाले'],'🎆 Grand show':['🎆 ग्रैंड शो','🎆 ग्रँड शो'],"📅 Today's show":['📅 आज का शो','📅 आजचा शो'],'⏱ Countdown':['⏱ उलटी गिनती','⏱ उलटी गणती'],'💥 Volley':['💥 बौछार','💥 वर्षाव'],'⛲ Ground fx':['⛲ ज़मीनी पटाखे','⛲ जमिनीवरचे फटाके'],'🔤 Sky text':['🔤 आसमान में लिखें','🔤 आकाशात लिहा'],'🧹 Clear sky':['🧹 आसमान साफ़ करें','🧹 आकाश साफ करा'],'🔊 Sound on':['🔊 आवाज़ चालू','🔊 आवाज चालू'],'🔇 Muted':['🔇 म्यूट','🔇 आवाज बंद'],'📷 Save photo':['📷 फोटो सेव करें','📷 फोटो सेव्ह करा'],'⚙ Settings':['⚙ सेटिंग्स','⚙ सेटिंग्ज'],'👁 Hide UI':['👁 मेनू छिपाएँ','👁 मेनू लपवा'],
+'Type a wish, e.g. Happy Diwali':['शुभकामना लिखें, जैसे शुभ दीपावली','शुभेच्छा लिहा, उदा. शुभ दीपावली'],'✍ Write in sky':['✍ आसमान में लिखें','✍ आकाशात लिहा'],'🔗 Share greeting':['🔗 शुभकामना भेजें','🔗 शुभेच्छा पाठवा'],
+'Sound on':['आवाज़ चालू','आवाज चालू'],'Muted':['म्यूट','आवाज बंद'],'Auto show on':['ऑटो शो चालू','ऑटो शो चालू'],'Auto show off':['ऑटो शो बंद','ऑटो शो बंद'],'Random':['रैंडम','यादृच्छिक'],
+'Finale already running':['फिनाले पहले से चल रहा है','फिनाले आधीच सुरू आहे'],'A show is already running':['एक शो पहले से चल रहा है','एक शो आधीच सुरू आहे'],'Please wait for the current show':['कृपया मौजूदा शो खत्म होने दें','कृपया सध्याचा शो संपू द्या'],'Easy! Let the others finish first':['धीरे! पहले बाकी को खत्म होने दें','सावकाश! आधी बाकीच्यांना संपू द्या'],
+'Link copied – paste it to a friend':['लिंक कॉपी हुआ – दोस्त को भेजें','लिंक कॉपी झाली – मित्राला पाठवा'],'Copy the link from the box':['बॉक्स से लिंक कॉपी करें','बॉक्समधून लिंक कॉपी करा'],'Shared!':['भेज दिया!','पाठवले!'],'📷 Saved screenshot':['📷 स्क्रीनशॉट सेव हुआ','📷 स्क्रीनशॉट सेव्ह झाला'],
+'🎇 Happy Diwali! Grand finale!':['🎇 शुभ दीपावली! ग्रैंड फिनाले!','🎇 शुभ दीपावली! भव्य फिनाले!'],'🎆 Grand show – about 70 seconds':['🎆 ग्रैंड शो – लगभग 70 सेकंड','🎆 ग्रँड शो – सुमारे 70 सेकंद'],"📅 Today's show – ":['📅 आज का शो – ','📅 आजचा शो – '],'💌 A greeting for you!':['💌 आपके लिए एक शुभकामना!','💌 तुमच्यासाठी एक शुभेच्छा!'],'💌 You have a greeting: ':['💌 आपके लिए शुभकामना: ','💌 तुमच्यासाठी शुभेच्छा: '],
+'Full screen is blocked here – use your browser’s full-screen option':['यहाँ फ़ुल स्क्रीन बंद है – ब्राउज़र का फ़ुल-स्क्रीन विकल्प इस्तेमाल करें','येथे फुल स्क्रीन बंद आहे – ब्राउझरचा फुल-स्क्रीन पर्याय वापरा'],'Effect: ':['प्रभाव: ','परिणाम: '],
+// settings
+'Show':['शो','शो'],'Sound':['आवाज़','आवाज'],'Text':['टेक्स्ट','मजकूर'],'Glow':['ग्लो','ग्लो'],'Scene':['दृश्य','दृश्य'],
+'Behaviour':['व्यवहार','वर्तन'],'Physics':['भौतिकी','भौतिकी'],'Look':['रूप','रूप'],'Performance':['प्रदर्शन','कामगिरी'],'Volume':['वॉल्यूम','आवाज पातळी'],'Sound style':['आवाज़ की शैली','आवाजाची शैली'],'Layers':['परतें','स्तर'],'Scrolling marquee':['चलती पट्टी','सरकती पट्टी'],'Text in the sky':['आसमान में लिखावट','आकाशातील लिखाण'],'Screen edge glow':['स्क्रीन किनारे की चमक','स्क्रीनच्या कडांची चमक'],'Backdrop':['पृष्ठभूमि','पार्श्वभूमी'],'Diwali decorations':['दिवाली की सजावट','दिवाळीची सजावट'],'Data':['डेटा','डेटा'],
+'Auto show':['ऑटो शो','ऑटो शो'],'Auto show intensity':['ऑटो शो की तीव्रता','ऑटो शोची तीव्रता'],'Volleys & combos':['बौछार और कॉम्बो','वर्षाव आणि कॉम्बो'],'Launch speed':['लॉन्च की गति','लॉन्च वेग'],'Gravity':['गुरुत्वाकर्षण','गुरुत्वाकर्षण'],'Wind':['हवा','वारा'],'Time speed (slow-mo)':['समय की गति (स्लो-मो)','वेळेचा वेग (स्लो-मो)'],'Particle density':['कणों की घनता','कणांची घनता'],'Burst size':['विस्फोट का आकार','स्फोटाचा आकार'],'Trail length':['पूँछ की लंबाई','शेपटीची लांबी'],'Bloom glow':['ब्लूम चमक','ब्लूम चमक'],'Drifting smoke':['तैरता धुआँ','तरंगणारा धूर'],'Sky flash on burst':['विस्फोट पर आसमान की चमक','स्फोटावेळी आकाशाची चमक'],'Rocket sparkle trails':['रॉकेट की चमकीली पूँछ','रॉकेटची चमकती शेपटी'],'Screen shake on booms':['धमाकों पर स्क्रीन हिलना','स्फोटांवर स्क्रीन हलणे'],'Quality':['गुणवत्ता','दर्जा'],'Show FPS meter':['FPS मीटर दिखाएँ','FPS मीटर दाखवा'],
+'Sound on ':['आवाज़ चालू','आवाज चालू'],'Master volume':['मुख्य वॉल्यूम','मुख्य आवाज'],'Effects volume':['इफ़ेक्ट वॉल्यूम','इफेक्ट आवाज'],'Music volume':['संगीत वॉल्यूम','संगीत आवाज'],'Style':['शैली','शैली'],'Boom':['धमाका','धमाका'],'Launch whistle':['लॉन्च की सीटी','लॉन्चची शिट्टी'],'Mortar launch thump':['मोर्टार लॉन्च की धमक','मोर्टार लॉन्चचा धक्का'],'Explosion boom':['विस्फोट का धमाका','स्फोटाचा धमाका'],'Crackle, fizz & sizzle':['चटक, फुसफुस और सनसनाहट','तडतड, फुसफुस आणि सरसर'],'Crowd ooh / aah / cheers':['भीड़ की वाह / आह / तालियाँ','गर्दीची व्वा / आह / जल्लोष'],'Night ambience (wind & crickets)':['रात का माहौल (हवा और झींगुर)','रात्रीचे वातावरण (वारा आणि रातकिडे)'],'Button click sounds':['बटन क्लिक की आवाज़','बटण क्लिकचा आवाज'],'Haptic feedback (phone vibration)':['हैप्टिक फ़ीडबैक (फ़ोन कंपन)','हॅप्टिक फीडबॅक (फोन कंपन)'],'Vibration strength':['कंपन की ताकत','कंपनाची ताकद'],'Vibration works on Android phones. iPhones do not allow web pages to vibrate.':['कंपन Android फ़ोन पर काम करता है। iPhone वेब पेज को कंपन करने की अनुमति नहीं देता।','कंपन Android फोनवर चालते. iPhone वेब पेजला कंपन करू देत नाही.'],'📳 Test vibration':['📳 कंपन जाँचें','📳 कंपन तपासा'],'🔔 Test sound':['🔔 आवाज़ जाँचें','🔔 आवाज तपासा'],'Use recorded booms from sounds/ folder':['sounds/ फ़ोल्डर की रिकॉर्डेड आवाज़ें इस्तेमाल करें','sounds/ फोल्डरमधील रेकॉर्ड केलेले आवाज वापरा'],'Realistic sound delay':['असली जैसी आवाज़ की देरी','खऱ्यासारखा आवाजाचा उशीर'],'Dhol drums on finale':['फिनाले पर ढोल','फिनालेवर ढोल'],'Festive music (generative)':['त्योहारी संगीत (स्वतः बनने वाला)','सणाचे संगीत (आपोआप तयार होणारे)'],'Music style':['संगीत की शैली','संगीत शैली'],
+'Show marquee':['चलती पट्टी दिखाएँ','सरकती पट्टी दाखवा'],'Marquee text':['पट्टी का टेक्स्ट','पट्टीतील मजकूर'],'Scroll speed':['स्क्रॉल की गति','स्क्रोल वेग'],'Text size':['टेक्स्ट का आकार','मजकुराचा आकार'],'Font':['फ़ॉन्ट','फॉन्ट'],'Colour':['रंग','रंग'],'Solid colour':['एक रंग','एकच रंग'],'Glow strength':['चमक की ताकत','चमकेची ताकद'],'Position':['स्थान','स्थान'],'Pulse on explosions':['विस्फोट पर धड़कन','स्फोटावर स्पंदन'],'Firework message':['आतिशबाज़ी संदेश','आतषबाजी संदेश'],'Sky font':['आसमान का फ़ॉन्ट','आकाशाचा फॉन्ट'],'Include text in auto show':['ऑटो शो में टेक्स्ट शामिल करें','ऑटो शोमध्ये मजकूर समाविष्ट करा'],'Countdown finale text':['काउंटडाउन फिनाले टेक्स्ट','काउंटडाउन फिनाले मजकूर'],'🔤 Fire message now':['🔤 संदेश अभी चलाएँ','🔤 संदेश आत्ता उडवा'],
+'Edge glow':['किनारे की चमक','कडांची चमक'],'Mode':['मोड','मोड'],'Intensity':['तीव्रता','तीव्रता'],'Glow width':['चमक की चौड़ाई','चमकेची रुंदी'],'Static colour':['स्थिर रंग','स्थिर रंग'],'Neon frame border':['नियॉन फ़्रेम किनारा','निऑन फ्रेम किनार'],'Glow flares on the side closest to each explosion, in the explosion’s own colour.':['हर विस्फोट के सबसे पास वाले किनारे पर, उसी रंग में चमक उठती है।','प्रत्येक स्फोटाच्या सर्वात जवळच्या कडेला, त्याच रंगात चमक उठते.'],
+'Sky':['आसमान','आकाश'],'Horizon':['क्षितिज','क्षितिज'],'Skyline height':['क्षितिज की ऊँचाई','क्षितिजाची उंची'],'Stars':['तारे','तारे'],'Moon':['चाँद','चंद्र'],'Skyline in front of fireworks':['आतिशबाज़ी के आगे क्षितिज','आतषबाजीच्या पुढे क्षितिज'],'Row of diyas (clay lamps)':['दीयों की कतार','दिव्यांची रांग'],'Hanging lanterns':['लटकते कंदील','लटकते आकाशकंदील'],'↺ Reset all settings':['↺ सभी सेटिंग्स रीसेट करें','↺ सर्व सेटिंग्ज रीसेट करा'],
+'Slow':['धीमा','सावकाश'],'Normal':['सामान्य','सामान्य'],'Fast':['तेज़','वेगवान'],'Auto (adaptive)':['ऑटो (अनुकूल)','ऑटो (अनुकूल)'],'High':['उच्च','उच्च'],'Medium':['मध्यम','मध्यम'],'Low (fastest)':['कम (सबसे तेज़)','कमी (सर्वात वेगवान)'],'Realistic':['असली जैसा','खऱ्यासारखा'],'Arcade 8-bit':['आर्केड 8-बिट','आर्केड 8-बिट'],'Temple bells':['मंदिर की घंटियाँ','मंदिराच्या घंटा'],'Auto (sometimes double)':['ऑटो (कभी दोहरा)','ऑटो (कधी दुहेरी)'],'Single boom':['एक धमाका','एक धमाका'],'Double boom':['दोहरा धमाका','दुहेरी धमाका'],'Diwali raga & tabla':['दिवाली राग और तबला','दिवाळी राग आणि तबला'],'Ambient pads':['शांत पैड संगीत','शांत पॅड संगीत'],'Neon':['नियॉन','निऑन'],'Outline':['आउटलाइन','आउटलाइन'],'LED dots':['LED बिंदु','LED ठिपके'],'Retro 3D':['रेट्रो 3D','रेट्रो 3D'],'Diwali gold flow':['दिवाली सुनहरी धारा','दिवाळी सोनेरी प्रवाह'],'Follows fireworks':['आतिशबाज़ी के साथ','आतषबाजीबरोबर'],'Rainbow flow':['इंद्रधनुषी धारा','इंद्रधनुषी प्रवाह'],'Top':['ऊपर','वर'],'Middle':['बीच में','मध्यभागी'],'Bottom':['नीचे','खाली'],'Reactive (burst colour)':['प्रतिक्रियाशील (विस्फोट का रंग)','प्रतिक्रियाशील (स्फोटाचा रंग)'],'Rainbow cycle':['इंद्रधनुषी चक्र','इंद्रधनुषी चक्र'],'Diwali night':['दिवाली की रात','दिवाळीची रात्र'],'Night':['रात','रात्र'],'Dusk':['साँझ','संध्याकाळ'],'Deep space':['गहरा अंतरिक्ष','खोल अवकाश'],'Aurora':['ध्रुवीय ज्योति','ध्रुवीय प्रकाश'],'Temple & palaces':['मंदिर और महल','मंदिर आणि महाल'],'City skyline':['शहर की स्काइलाइन','शहराची स्कायलाइन'],'Hills':['पहाड़ियाँ','टेकड्या'],'Open sky':['खुला आसमान','मोकळे आकाश'],
+'Impact':['इम्पैक्ट','इम्पॅक्ट'],'Festive (Yatra One)':['त्योहारी (यात्रा वन)','सणाचा (यात्रा वन)'],'Clean':['सादा','साधा'],'Serif':['सेरिफ़','सेरिफ'],'Mono':['मोनो','मोनो'],'Script':['लिपि','लिपी'],'Playful':['मस्तीभरा','खेळकर'],
+'Diwali mix':['दिवाली मिक्स','दिवाळी मिक्स'],'Peacock':['मोर','मोर'],'Gold':['सुनहरा','सोनेरी'],'Red':['लाल','लाल'],'Orange':['नारंगी','नारिंगी'],'Green':['हरा','हिरवा'],'Cyan':['आसमानी','आकाशी'],'Blue':['नीला','निळा'],'Purple':['बैंगनी','जांभळा'],'Pink':['गुलाबी','गुलाबी'],'Silver':['चाँदी','चांदी'],'Red·White·Blue':['लाल·सफ़ेद·नीला','लाल·पांढरा·निळा'],'Fire':['आग','आग'],'Rainbow':['इंद्रधनुष','इंद्रधनुष्य'],
+// shells
+'Peony':['पियोनी','पिओनी'],'Chrysanthemum':['गुलदाउदी','शेवंती'],'Willow':['विलो','विलो'],'Palm':['पाम','पाम'],'Ring':['छल्ला','रिंग'],'Double ring':['दोहरा छल्ला','दुहेरी रिंग'],'Heart':['दिल','हृदय'],'Star':['तारा','तारा'],'Spiral':['सर्पिल','सर्पिल'],'Saturn':['शनि','शनी'],'Smiley':['स्माइली','स्मायली'],'Butterfly':['तितली','फुलपाखरू'],'Flower':['फूल','फूल'],'Crossette':['क्रॉसेट','क्रॉसेट'],'Crackle':['चटक','तडतड'],'Strobe':['स्ट्रोब','स्ट्रोब'],'Horsetail':['हॉर्सटेल','हॉर्सटेल'],'Kamuro':['कामुरो','कामुरो'],'Silver willow':['सिल्वर विलो','सिल्व्हर विलो'],'Brocade':['ब्रोकेड','ब्रोकेड'],'Dahlia':['डालिया','डेलिया'],'Two colour':['दो रंग','दोन रंग'],'Colour change':['रंग बदलना','रंग बदलणे'],'Triple pistil':['ट्रिपल पिस्टिल','ट्रिपल पिस्टिल'],'Triple blast':['तिहरा धमाका','तिहेरी धमाका'],'Serpent':['सर्प','नाग'],'Comet':['धूमकेतु','धूमकेतू'],'Crackle chrysanthemum':['चटक गुलदाउदी','तडतड शेवंती'],'Diya flame':['दीये की लौ','दिव्याची ज्योत'],'Flower pot (anar)':['फूलों का गमला (अनार)','फुलांची कुंडी (अनार)'],'Chakri (spinner)':['चकरी (घूमने वाली)','भुईचक्र (फिरणारे)'],'Laddi (hand-lit)':['लड़ी (हाथ से जलाएँ)','लड (हाताने पेटवा)'],'Sparkler (phuljhadi)':['फुलझड़ी','फुलबाजी'],'Sutli bomb':['सुतली बम','सुतळी बॉम्ब'],'Roman candle':['रोमन कैंडल','रोमन कँडल'],'Sky text':['आसमान में लिखें','आकाशात लिहा']
+};
+/* cracker names + info-card text, in the order of the table (index = number-1) */
+const CKT={
+hi:{n:['टिकली बंदूक','टिकली पट्टी','नाग गोली','लहसुन पटाखा','फेंक पटाखे','छोटी फुलझड़ी','बड़ी फुलझड़ी','पेंसिल पटाखा','जादुई पेंसिल','पुलपुल','अनार','मिनी अनार','बड़ा अनार','रंगीन अनार','रंग बदलने वाला अनार','मोर अनार','सुनहरी बौछार','चकरी','बड़ी चकरी','तोरा तोरा चकरी','स्वास्तिक चक्र','हैंड चकरी','डिस्को चकरी','फैंसी चकरी','स्टार चकरी','बिजली','लक्ष्मी बम','एटम बम','हाइड्रो बम','सुतली बम','चॉकलेट बम','बुलेट बम','555 बम','कुरुवि वेदी','मरून बम','चायनीज़ पटाखा','लड़ी','सौ वाली लड़ी','पाँच सौ वाली लड़ी','हज़ार वाली लड़ी','चटाई बम','बीड़ी पटाखा','छोटा रॉकेट','पारंपरिक रॉकेट','सीटी वाला रॉकेट','रंगीन रॉकेट','सिग्नल रॉकेट','रॉकेट पेंसिल','तितली','रंगीन तितली','हेलीकॉप्टर','फैंसी हेलीकॉप्टर','टिमटिमाता तारा','फोटो फ़्लैश','सायरन','रंगीन धुआँ','गंगा जमुना','अशर्फी','किटकैट','रोमन कैंडल','फैंसी अनार','फैंसी रंगीन चकरी','बिजली पत्थर','रंगीन माचिस'],
+v:['छोटी खिलौना पिस्तौल, 8–13 सेमी लंबी; प्लास्टिक या धातु की बॉडी, मूठ, नली और ट्रिगर।','लगभग 1–2 सेमी चौड़ी पतली कागज़ की पट्टी या रोल, जिस पर नियमित दूरी पर बिंदु होते हैं।','छोटी काली गोली, लगभग 1–2 सेमी चौड़ी।','लहसुन के आकार की छोटी नई चीज़, लगभग 1–3 सेमी।','कागज़ में लिपटे कंकड़ जैसे छोटे दाने, लगभग 0.5–1.5 सेमी।','10–20 सेमी लंबी पतली डंडी, सिरे पर रसायन की परत।','25–45 सेमी लंबी पतली डंडी।','पतला खड़ा बेलनाकार कागज़ी ढाँचा, लगभग 8–18 सेमी ऊँचा।','पेंसिल के आकार की नई चीज़, लगभग 8–18 सेमी लंबी।','पतली डंडी वाली चीज़, छोटी फुलझड़ी जैसी दिखती है।','खड़ा मोटा बेलन, लगभग 5–12 सेमी ऊँचा और 4–9 सेमी चौड़ा।','छोटा मोटा बेलन, लगभग 3–6 सेमी ऊँचा।','बड़ा बेलनाकार डिब्बा, लगभग 8–15 सेमी ऊँचा।','रंगीन छपी पैकिंग वाला बेलनाकार फव्वारा।','सामान्य अनार जैसा, सजावटी बहुरंगी पैकिंग के साथ।','मोर की कलाकृति वाला सजावटी बेलनाकार फव्वारा।','छोटा खड़ा बेलनाकार डिब्बा।','चपटी गोल चकती, लगभग 4–8 सेमी व्यास।','बड़ी गोल चकती, लगभग 7–12 सेमी व्यास।','सजावटी गोल ज़मीनी चकरी।','चपटा सजावटी गोल चक्र, लगभग 5–10 सेमी।','हैंडल या सहारे वाली छोटी, हाथ में पकड़ने की चीज़।','सजावटी चपटी चकरी, लगभग 5–10 सेमी।','सजावटी गोल या आकार वाली नई चीज़, लगभग 5–12 सेमी।','तारे की आकृति वाला छोटा सजावटी चक्र।','कागज़ में लिपटा छोटा ठोस पटाखा, लगभग 2–5 सेमी लंबा।','छोटा बेलनाकार या कैप्सूल जैसा कागज़ का पैकेट।','ठोस, अपेक्षाकृत मोटा कागज़ में लिपटा पैकेट।','ठोस बेलनाकार पैकेट, अक्सर नीले रंग की कलाकृति वाला।','गोल या बेलनाकार बाहरी रूप, जिस पर जूट जैसी सुतली लिपटी होती है।','छोटा गोल या बेलनाकार खिलौना, चॉकलेट जैसे चित्रों के साथ।','छोटा गोली के आकार का या बेलनाकार कागज़ी पैकेट।','छोटा पैकेट जिस पर नंबर की ब्रांडिंग प्रमुख है।','दक्षिण भारतीय बाज़ार शैली का छोटा आवाज़ वाला पटाखा; रूप अलग-अलग होता है।','छोटा बेलनाकार या गोल पैकेट।','कागज़ में लिपटा छोटा बेलनाकार पैकेट।','जुड़ी हुई कागज़ की माला, बंडलों में लगभग 0.5–3 मीटर।','जुड़े हुए छोटे कागज़ी दानों का गुच्छा।','लंबी जुड़ी हुई पटाखों की माला।','बड़ी जुड़ी हुई कागज़ की माला, परंपरागत रूप से लपेटी या बंडल की हुई।','चौड़ी, चपटी, चटाई जैसी जुड़ी इकाइयों की बिछावट।','डोरी या गुच्छे में सजे छोटे कागज़ी दाने।','छोटा लंबा रॉकेट आकार, देखने में लगभग 8–15 सेमी।','लंबा बेलनाकार ढाँचा, नुकीला सिरा और संतुलन की पूँछ। शरीर लगभग 15–30 सेमी।','पतला रॉकेट आकार, नुकीला सिरा और संतुलन की पूँछ।','रंगीन बाहरी चित्रों वाला लंबा रॉकेट।','लंबे रॉकेट आकार की नई चीज़।','पतली पेंसिल जैसी पैक की हुई नई चीज़।','तितली के आकार की छोटी सजावटी चीज़, लगभग 5–10 सेमी।','छपे हुए पंखों वाली सजावटी तितली।','छोटा हेलीकॉप्टर जैसा ढाँचा, लगभग 5–10 सेमी।','सजावटी रोटर जैसी नई चीज़।','छोटी बेलनाकार नई चीज़।','छोटा पैकेट जिस पर फ़्लैश जैसी चित्रकारी है।','छोटी नली जैसी नई चीज़।','छोटी बेलनाकार या कागज़ में लिपटी नई चीज़।','सजावटी पैकिंग, अक्सर दो रंगों की ब्रांडिंग के साथ।','सिक्के जैसा या सजावटी छपा रूप।','छोटा आयताकार पैकेट, चॉकलेट-बार जैसी चित्रकारी।','लंबी बेलनाकार नली, फव्वारे से दिखने में अलग।','सजावटी खड़ा बेलनाकार डिब्बा।','चपटी गोल सजावटी चकरी।','पत्थर या गोली जैसी छोटी नई चीज़।','माचिस की डिब्बी जैसा छोटा पैकेट।'],
+e:['कागज़ की टिकली पट्टी से छोटी-छोटी पट-पट की आवाज़ करती है।','संगत खिलौना पिस्तौल के साथ इस्तेमाल करने पर छोटी-छोटी आवाज़ों की लड़ी।','जलने पर राख साँप जैसी आकृति में फैल जाती है।','पुराने ज़माने का फटने वाला खिलौना।','छोटी पटाखे जैसी आवाज़।','चमकीली चिंगारियों की बौछार।','ज़्यादा देर तक चलने वाली चिंगारियाँ।','सीधा ऊपर उठता चिंगारियों का फव्वारा।','चिंगारी या रंग-बिरंगा दृश्य प्रभाव।','प्रकार के अनुसार चमकती या चटकती आवाज़।','एक जगह टिका चिंगारियों का ऊपर उठता फव्वारा।','छोटा फव्वारा।','बड़ा फव्वारा प्रदर्शन।','रंगीन फव्वारे का प्रभाव।','चलते समय रंग बदलता है।','मोर की पूँछ जैसा पंखाकार फव्वारा।','सुनहरी चमकती फुहार।','ज़मीन पर तेज़ घूमती है और चिंगारियाँ छोड़ती है।','चौड़ा घूमता चिंगारी प्रदर्शन।','ज़मीन पर घूमता-घुमाता प्रभाव।','घूमती चिंगारियों का प्रभाव।','घूमता चिंगारी प्रदर्शन।','रंगीन घूमता प्रभाव।','घूर्णन का दृश्य प्रभाव।','घूमता चिंगारी प्रदर्शन।','तेज़ चटाख की आवाज़।','एक ज़ोरदार धमाका।','स्पष्ट और भारी एक धमाका।','ज़ोरदार धमाका।','एक ज़ोरदार धमाका।','तेज़ चटाख की आवाज़।','तेज़ धमाका।','एक धमाका।','आवाज़ का प्रभाव।','गहरा, भारी धमाका।','तेज़ चटकने की आवाज़।','बार-बार फूटने की लड़ी।','तेज़ी से बार-बार धमाके।','धमाकों की लंबी कतार।','धमाकों की बहुत लंबी कतार।','बहुत पास-पास धमाकों की तेज़ कतार।','बार-बार चटकने की आवाज़।','ऊपर उड़कर छोटा दृश्य प्रभाव।','ऊपर उड़ान और आसमान में दृश्य प्रभाव।','ऊपर जाते समय सीटी की आवाज़।','ऊपर उड़कर रंगीन दृश्य प्रभाव।','संकेत जैसा दृश्य प्रभाव।','मॉडल के अनुसार थोड़ी देर का ऊपर जाने वाला प्रभाव।','तितली जैसा घूमता या उड़ता प्रभाव।','घूमता या चलता दृश्य प्रभाव।','रोटर जैसा घूमना या ऊपर उठना।','घूमता दृश्य प्रभाव।','टिमटिमाती रोशनी का प्रभाव।','क्षणभर की तेज़ चमक।','चढ़ती या लहराती आवाज़।','रंगीन धुएँ का प्रभाव।','उत्पाद के अनुसार बहुरंगी रोशनी का प्रभाव।','प्रभाव कंपनी के प्रकार पर निर्भर।','प्रभाव उत्पाद पर निर्भर।','एक के बाद एक अलग-अलग दृश्य प्रभाव।','तरह-तरह के प्रभाव वाला फव्वारा।','रंगीन घूमता प्रभाव।','पुरानी नई चीज़; प्रभाव उत्पाद पर निर्भर।','छोटी रंगीन लौ का प्रभाव।']},
+mr:{n:['टिकल्यांची बंदूक','टिकल्यांची पट्टी','नाग गोळी','लसूण फटाका','फेकायचे फटाके','छोटी फुलबाजी','मोठी फुलबाजी','पेन्सिल फटाका','जादूची पेन्सिल','पुलपुल','अनार','मिनी अनार','मोठा अनार','रंगीत अनार','रंग बदलणारा अनार','मोर अनार','सोनेरी वर्षाव','भुईचक्र','मोठे भुईचक्र','तोरा तोरा चक्री','स्वस्तिक चक्र','हॅन्ड चक्री','डिस्को चक्री','फॅन्सी चक्री','स्टार चक्री','बिजली','लक्ष्मी बॉम्ब','ॲटम बॉम्ब','हायड्रो बॉम्ब','सुतळी बॉम्ब','चॉकलेट बॉम्ब','बुलेट बॉम्ब','555 बॉम्ब','कुरुवी वेडी','मरून बॉम्ब','चायनीज फटाका','लड','शंभरची लड','पाचशेची लड','हजाराची लड','चटई बॉम्ब','बिडी फटाका','छोटा रॉकेट','पारंपरिक रॉकेट','शिट्टी वाला रॉकेट','रंगीत रॉकेट','सिग्नल रॉकेट','रॉकेट पेन्सिल','फुलपाखरू','रंगीत फुलपाखरू','हेलिकॉप्टर','फॅन्सी हेलिकॉप्टर','चमचमता तारा','फोटो फ्लॅश','सायरन','रंगीत धूर','गंगा जमुना','अशर्फी','किटकॅट','रोमन कँडल','फॅन्सी अनार','फॅन्सी रंगीत चक्री','विजेचा दगड','रंगीत आगपेटी'],
+v:['लहान खेळण्यातील पिस्तूल, ८–१३ सेमी लांब; प्लास्टिक किंवा धातूची बॉडी, मूठ, नळी आणि ट्रिगर.','सुमारे १–२ सेमी रुंद पातळ कागदी पट्टी किंवा रोल, ज्यावर ठराविक अंतरावर ठिपके असतात.','लहान काळी गोळी, सुमारे १–२ सेमी रुंद.','लसणाच्या आकाराची लहान नावीन्यपूर्ण वस्तू, सुमारे १–३ सेमी.','कागदात गुंडाळलेले खड्यासारखे छोटे दाणे, सुमारे ०.५–१.५ सेमी.','१०–२० सेमी लांब पातळ काडी, टोकावर रसायनाचा थर.','२५–४५ सेमी लांब पातळ काडी.','पातळ उभा दंडगोलाकार कागदी भाग, सुमारे ८–१८ सेमी उंच.','पेन्सिलच्या आकाराची नावीन्यपूर्ण वस्तू, सुमारे ८–१८ सेमी लांब.','पातळ काडीची वस्तू, लहान फुलबाजीसारखी दिसते.','उभा जाडसर दंडगोल, सुमारे ५–१२ सेमी उंच आणि ४–९ सेमी रुंद.','लहान जाडसर दंडगोल, सुमारे ३–६ सेमी उंच.','मोठा दंडगोलाकार डबा, सुमारे ८–१५ सेमी उंच.','रंगीत छापील पॅकिंग असलेला दंडगोलाकार कारंजा.','सामान्य अनारासारखा, सजावटी बहुरंगी पॅकिंगसह.','मोराची चित्रे असलेला सजावटी दंडगोलाकार कारंजा.','लहान उभा दंडगोलाकार डबा.','सपाट गोल चकती, सुमारे ४–८ सेमी व्यास.','मोठी गोल चकती, सुमारे ७–१२ सेमी व्यास.','सजावटी गोल जमिनीवरील भुईचक्र.','सपाट सजावटी गोल चक्र, सुमारे ५–१० सेमी.','हँडल किंवा आधार असलेली लहान हातात धरायची वस्तू.','सजावटी सपाट चक्री, सुमारे ५–१० सेमी.','सजावटी गोल किंवा आकारदार नावीन्यपूर्ण वस्तू, सुमारे ५–१२ सेमी.','ताऱ्याच्या आकृतीचे लहान सजावटी चक्र.','कागदात गुंडाळलेला लहान घट्ट फटाका, सुमारे २–५ सेमी लांब.','लहान दंडगोलाकार किंवा कॅप्सूलसारखे कागदी पाकीट.','ठोस, तुलनेने जाड कागदात गुंडाळलेले पाकीट.','ठोस दंडगोलाकार पाकीट, बहुधा निळ्या रंगाच्या चित्रांसह.','गोल किंवा दंडगोलाकार बाह्यरूप, ज्यावर ताग/सुतळीसारखी दोरी गुंडाळलेली असते.','लहान गोल किंवा दंडगोलाकार वस्तू, चॉकलेटसारख्या चित्रांसह.','लहान गोळीच्या आकाराचे किंवा दंडगोलाकार कागदी पाकीट.','लहान पाकीट, ज्यावर क्रमांकाचे ब्रँडिंग ठळक असते.','दक्षिण भारतीय बाजारशैलीचा लहान आवाजाचा फटाका; स्वरूप वेगवेगळे असते.','लहान दंडगोलाकार किंवा गोल पाकीट.','कागदात गुंडाळलेले लहान दंडगोलाकार पाकीट.','जोडलेली कागदी माळ, गुच्छांमध्ये सुमारे ०.५–३ मीटर.','जोडलेल्या लहान कागदी फटाक्यांचा गुच्छ.','लांब जोडलेली फटाक्यांची माळ.','मोठी जोडलेली कागदी माळ, पारंपरिकरीत्या गुंडाळलेली किंवा गुच्छ केलेली.','रुंद, सपाट, चटईसारखी जोडलेल्या घटकांची मांडणी.','दोरीत किंवा गुच्छात लावलेले लहान कागदी फटाके.','लहान लांबट रॉकेटच्या आकाराचे, दिसण्यात सुमारे ८–१५ सेमी.','लांब दंडगोलाकार भाग, टोकदार टोक आणि संतुलनाची शेपटी. शरीर सुमारे १५–३० सेमी.','बारीक रॉकेटचा आकार, टोकदार टोक आणि संतुलनाची शेपटी.','रंगीत बाह्य चित्रांचा लांब रॉकेट.','लांब रॉकेटच्या आकाराची नावीन्यपूर्ण वस्तू.','बारीक पेन्सिलसारखी पॅक केलेली नावीन्यपूर्ण वस्तू.','फुलपाखराच्या आकाराची लहान सजावटी वस्तू, सुमारे ५–१० सेमी.','छापलेल्या पंखांची सजावटी फुलपाखराची वस्तू.','लहान हेलिकॉप्टरसारखा भाग, सुमारे ५–१० सेमी.','सजावटी रोटरसारखी नावीन्यपूर्ण वस्तू.','लहान दंडगोलाकार नावीन्यपूर्ण वस्तू.','लहान पाकीट, ज्यावर फ्लॅशसारखी चित्रे आहेत.','लहान नळीसारखी नावीन्यपूर्ण वस्तू.','लहान दंडगोलाकार किंवा कागदात गुंडाळलेली नावीन्यपूर्ण वस्तू.','सजावटी पॅकिंग, बहुधा दोन रंगांच्या ब्रँडिंगसह.','नाण्यासारखे किंवा सजावटी छापील रूप.','लहान आयताकार पाकीट, चॉकलेट-बारसारखी चित्रे.','लांब दंडगोलाकार नळी, कारंजापेक्षा दिसण्यात वेगळी.','सजावटी उभा दंडगोलाकार डबा.','सपाट गोल सजावटी चक्री.','दगडासारखी किंवा गोळीसारखी लहान नावीन्यपूर्ण वस्तू.','आगपेटीसारखे लहान पाकीट.'],
+e:['कागदी टिकल्यांच्या पट्टीमुळे लहान टकटक आवाज येतो.','सुसंगत खेळण्यातील पिस्तुलासोबत वापरल्यावर लहान आवाजांची मालिका.','जळल्यावर राख सापासारख्या आकारात फुगते.','जुन्या काळातील फुटणारे खेळणे.','लहान फट्ट आवाज.','चमकदार ठिणग्यांचा वर्षाव.','जास्त वेळ टिकणाऱ्या ठिणग्या.','उभा ठिणग्यांचा कारंजा.','ठिणग्या किंवा रंगीत दृश्य परिणाम.','प्रकारानुसार चमकणारा किंवा तडतडणारा परिणाम.','एका जागी उभा राहणारा ठिणग्यांचा कारंजा.','लहान कारंजा.','मोठे कारंजा प्रदर्शन.','रंगीत कारंजाचा परिणाम.','चालताना रंग बदलतो.','मोराच्या पिसाऱ्यासारखा पंख्याच्या आकाराचा कारंजा.','सोनेरी चमकणारा कारंजा.','जमिनीवर वेगाने फिरते आणि ठिणग्या उडवते.','रुंद फिरणारे ठिणग्यांचे प्रदर्शन.','जमिनीवर गरगर फिरणारा परिणाम.','फिरणाऱ्या ठिणग्यांचा परिणाम.','फिरणारे ठिणग्यांचे प्रदर्शन.','रंगीत फिरणारा परिणाम.','फिरण्याचा दृश्य परिणाम.','फिरणारे ठिणग्यांचे प्रदर्शन.','तीक्ष्ण फट्ट आवाज.','एक जोरदार आवाज.','स्पष्ट आणि दमदार एकच आवाज.','जोरदार आवाज.','एक जोरदार आवाज.','तीक्ष्ण फट्ट आवाज.','तीक्ष्ण आवाज.','एक आवाज.','आवाजाचा परिणाम.','खोल, दमदार आवाज.','तीक्ष्ण फटफट आवाज.','वारंवार फुटण्याची मालिका.','वेगाने वारंवार आवाज.','आवाजांची लांब मालिका.','आवाजांची खूप लांब मालिका.','अगदी जवळजवळ आवाजांची वेगवान मालिका.','वारंवार फटफट आवाज.','वर उडून लहान दृश्य परिणाम.','वर उड्डाण आणि आकाशात दृश्य परिणाम.','वर जाताना शिट्टीचा आवाज.','वर उडून रंगीत दृश्य परिणाम.','संकेतासारखा दृश्य परिणाम.','मॉडेलनुसार थोड्या वेळाचा वर जाणारा परिणाम.','फुलपाखरासारखा फिरणारा किंवा उडणारा परिणाम.','फिरणारा किंवा हलणारा दृश्य परिणाम.','रोटरसारखे फिरणे किंवा वर उचलले जाणे.','फिरणारा दृश्य परिणाम.','चमचमणाऱ्या प्रकाशाचा परिणाम.','क्षणभराचा तेजस्वी प्रकाश.','वर चढणारा किंवा लहरणारा आवाज.','रंगीत धुराचा परिणाम.','उत्पादनानुसार बहुरंगी प्रकाशाचा परिणाम.','परिणाम व्यावसायिक प्रकारानुसार बदलतो.','परिणाम उत्पादनानुसार बदलतो.','एकापाठोपाठ एक वेगवेगळे दृश्य परिणाम.','विविध परिणाम असलेला कारंजा.','रंगीत फिरणारा परिणाम.','जुनी नावीन्यपूर्ण वस्तू; परिणाम उत्पादनानुसार बदलतो.','लहान रंगीत ज्योतीचा परिणाम.']}
+};
+const LANGS=[['en','English'],['hi','हिन्दी'],['mr','मराठी']];
+const LANGDEF={en:{skyText:'HAPPY DIWALI',cdText:'HAPPY DIWALI!',mqText:'HAPPY DIWALI from Om'},hi:{skyText:'शुभ दीपावली',cdText:'शुभ दीपावली!',mqText:'शुभ दीपावली – ओम की ओर से'},mr:{skyText:'शुभ दीपावली',cdText:'शुभ दिवाळी!',mqText:'शुभ दिवाळी – ओम कडून'}};
+const LMSGS={en:['HAPPY DIWALI','शुभ दीपावली','DIWALI','LIGHTS!','HAPPY DIWALI'],hi:['शुभ दीपावली','दिवाली मुबारक','शुभ दीपावली','HAPPY DIWALI'],mr:['शुभ दीपावली','दिवाळीच्या शुभेच्छा','शुभ दिवाळी','HAPPY DIWALI']};
+const _t=k=>{const e=TR[k],i=LIDX[S.lang];return(e&&i!==undefined&&e[i])||k};
+const CKALT=["टिकली बंदूक, टिकली गन", "टिकली पट्टी, पेपर कैप्स", "नाग गोली, स्नेक पेलेट", "लहसुन पटाखा", "मैजिक पॉप्स, बैंग स्नैप्स", "छोटी फुलझड़ी, माथाप्पू", "बड़ी फुलझड़ी", "पेंसिल पटाखा", "मैजिक पेंसिल", "पुलपुल", "अनार, फ्लावर पॉट, टुबरी, चिचुबुड्डी", "बेबी अनार", "बड़ा अनार", "रंगीन अनार", "मल्टी-कलर अनार", "मोर अनार, पीकॉक फाउंटेन", "गोल्डन फाउंटेन", "ज़मीन चक्कर, चक्करम, चोरकी", "लार्ज चक्कर", "तोरा तोरा", "स्वास्तिक चक्कर", "हैंड स्पिनर", "डिस्को चकरी", "फैंसी चक्कर", "स्टार चकरी", "बिजली पटाखा", "लक्ष्मी बम", "एटम बम पटाखा", "हाइड्रो पटाखा", "रस्सी बम, सुतली पटाखा", "चॉकलेट पटाखा", "बुलेट पटाखा", "555 पटाखा", "कुरिवि वेदी", "मरून बम", "चायनीज़ पटाखा", "लर, लड़ी पटाखा, सरवेदी", "सौ वाली लड़ी", "पाँच सौ वाली लड़ी", "हज़ार वाली लड़ी", "चटाई पटाखा", "बीड़ी क्रैकर", "छोटा रॉकेट", "रॉकेट पटाखा", "सीटी रॉकेट", "रंगीन रॉकेट", "सिग्नल पटाखा", "मिनी रॉकेट नवेल्टी", "तितली पटाखा", "कलर बटरफ्लाई", "हेलीकॉप्टर पटाखा", "फैंसी कॉप्टर", "ट्विंकलिंग स्टार पटाखा", "फ्लैश पटाखा", "व्हिसल पटाखा", "स्मोक पटाखा", "गंगा-जमुना पटाखा", "अशर्फी पटाखा", "किटकैट पटाखा", "रोमन कैंडल", "फैंसी अनार", "फैंसी कलर चकरी", "बिजली स्टोन", "रंगीन माचिस"];
+const cka=r=>(S.lang!=='en'&&CKALT[r.no-1])||r.a;
+const ckn=r=>(CKT[S.lang]&&CKT[S.lang].n[r.no-1])||r.n;
+const ckv=r=>(CKT[S.lang]&&CKT[S.lang].v[r.no-1])||r.v;
+const cke=r=>(CKT[S.lang]&&CKT[S.lang].e[r.no-1])||r.e;
+
 try{const j=JSON.parse(localStorage.getItem('fw-studio-v6')||'{}');if(j&&typeof j==='object'&&!Array.isArray(j))for(const k of Object.keys(j))if(hasOwn(DEFAULTS,k))S[k]=j[k]}catch(e){}
 let saveT=0;
 function save(){clearTimeout(saveT);saveT=setTimeout(()=>{try{localStorage.setItem('fw-studio-v6',JSON.stringify(S))}catch(e){}},250)}
@@ -426,6 +493,14 @@ function drawScene(){
   }
 }
 
+/* ---------- haptics: a distinct vibration pattern per cracker (Android; ignored where unsupported) ---------- */
+const HAP={tick:[6],sharp:[12],pop:[28],thud:[45,20,35],boom:[70,30,110],doom:[100,30,160,40,90],crack:[14,20,14],whip:[10,14,8],splash:[30,20,50],triple:[22,22,22,22,22],sutli:[80,30,120]};
+const Hap={last:0,
+  buzz(pat,force){
+    if(!S.haptics||typeof navigator.vibrate!=='function'||document.visibilityState!=='visible')return;
+    const now=performance.now();if(!force&&now-this.last<32)return;this.last=now;
+    try{navigator.vibrate(pat.map(v=>Math.min(400,Math.round(v*S.hapPow))))}catch(e){}
+  }};
 /* =====================================================================
    SOUND ENGINE (everything synthesized with Web Audio)
    ===================================================================== */
@@ -596,13 +671,39 @@ const Snd={
     f.type='highpass';f.frequency.value=5200;this.env(g,t,.15,.07,dur);n.connect(f);f.connect(g);g.connect(this.bus(pan,.2));n.start(t);n.stop(t+dur+.3);this.track(n);
   },
   /* sharp cracker bang (laddi / bomb) */
-  bang(pan,delay,loud=1){
+  bang(pan,delay,loud=1,pitch=1){
     if(!this.ok('boom'))return;const ac=this.ac,t=ac.currentTime+delay+.005,b=this.bus(pan,.3);
-    const n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='highpass';f.frequency.value=700;
+    const n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='highpass';f.frequency.value=700*pitch;
     this.env(g,t,.001,.45*loud,.12+loud*.12);n.connect(f);f.connect(g);g.connect(b);n.start(t);n.stop(t+.5);this.track(n);
-    this.osc('sine',180,50,t,.18+loud*.12,.5*loud,b,.001);
+    this.osc('sine',180*pitch,50*pitch,t,.18+loud*.12,.5*loud,b,.001);
   },
-  snap(pan,vol=.3){if(!this.ok('boom'))return;const ac=this.ac,t=ac.currentTime+.005,n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='highpass';f.frequency.value=1400;this.env(g,t,.001,.55*vol,.045);n.connect(f);f.connect(g);g.connect(this.bus(pan,.1));n.start(t);n.stop(t+.12);this.track(n)},
+  /* profiled bomb voice: crack + body + sub thump + rumbling tail + rolling echoes that bounce around the stereo field */
+  bomb(pan,delay,o){
+    if(!this.ok('boom'))return;const ac=this.ac,v=(o.vol??1)*(o.lv||1),hits=o.hits||1,gap=o.gap||.08,t0=ac.currentTime+delay+.005;
+    for(let h=0;h<hits;h++){
+      const t=t0+h*gap,b=this.bus(pan,o.wet??.3),hv=v*(h?.8:1),g1=ac.createGain(),n=this.noise(),f=ac.createBiquadFilter();
+      f.type='lowpass';f.frequency.setValueAtTime(o.lp0,t);f.frequency.exponentialRampToValueAtTime(Math.max(60,o.lp1),t+o.nl);
+      this.env(g1,t,.002,.55*hv*(o.nm??.7),o.nl);n.connect(f);f.connect(g1);g1.connect(b);n.start(t);n.stop(t+o.nl+.1);this.track(n);
+      this.osc('sine',o.f0,o.f1,t,o.sl,.85*hv*(o.sg??.7),b,.002);
+      const n2=this.noise(),f2=ac.createBiquadFilter(),g2=ac.createGain();f2.type='bandpass';f2.frequency.value=o.cf;f2.Q.value=o.cq||.8;
+      this.env(g2,t,.0007,.8*hv*(o.cg??.7),o.cd||.05);n2.connect(f2);f2.connect(g2);g2.connect(b);n2.start(t);n2.stop(t+.25);this.track(n2);
+    }
+    if(o.tg){const bn=ac.createBufferSource();bn.buffer=this.bb;bn.loop=true;bn.loopStart=Math.random()*2;const bf=ac.createBiquadFilter(),bg=ac.createGain();
+      bf.type='lowpass';bf.frequency.value=o.tl||260;this.env(bg,t0+.02,.1,.5*v*o.tg,o.tt);bn.connect(bf);bf.connect(bg);bg.connect(this.bus(pan,.4));bn.start(t0);bn.stop(t0+o.tt+.3);this.track(bn)}
+    for(let i=1;i<=(o.ec||0);i++){
+      const te=t0+i*(o.eg||.35)*(1+Math.random()*.12),be=this.bus(pan*(i%2?-.7:.7),.6),ne=this.noise(),fe=ac.createBiquadFilter(),ge=ac.createGain();
+      fe.type='lowpass';fe.frequency.value=Math.max(120,(o.eLP||700)-i*110);this.env(ge,te,.03,.6*v*(o.egain||.4)/i,.4+.18*i+(o.nl||.2));ne.connect(fe);fe.connect(ge);ge.connect(be);ne.start(te);ne.stop(te+1.8);this.track(ne);
+      if(o.f1<120)this.osc('sine',o.f1*1.6,o.f1,te,.45,.4*v*(o.egain||.4)/i,be,.01);
+    }
+  },
+  /* fountain roar: small anars hiss high and thin, big ones rumble low and long */
+  roar(pan,dur,size=1){
+    if(!this.ok('crackle'))return;const ac=this.ac,t=ac.currentTime+.05,n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();
+    f.type='bandpass';f.frequency.value=Math.max(200,720/size);f.Q.value=.7;
+    g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(.16*Math.min(1.6,size),t+.35);g.gain.setValueAtTime(.12*Math.min(1.6,size),t+dur*.7);g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    n.connect(f);f.connect(g);g.connect(this.bus(pan,.3));n.start(t);n.stop(t+dur+.2);this.track(n);
+  },
+  snap(pan,vol=.3,pitch=1){if(!this.ok('boom'))return;const ac=this.ac,t=ac.currentTime+.005,n=this.noise(),f=ac.createBiquadFilter(),g=ac.createGain();f.type='highpass';f.frequency.value=1400*pitch;this.env(g,t,.001,.55*vol,.045);n.connect(f);f.connect(g);g.connect(this.bus(pan,.1));n.start(t);n.stop(t+.12);this.track(n)},
   shrill(dur,pan){if(!this.ok('whistle'))return;const t=this.ac.currentTime+.01,b=this.bus(pan,.3),o=this.osc('sine',1100,3300,t,dur,.16,b,.05),l=this.ac.createOscillator(),lg=this.ac.createGain();l.frequency.value=26;lg.gain.value=60;l.connect(lg);lg.connect(o.frequency);l.start(t);l.stop(t+dur+.2);this.track(l)},
   siren(dur,pan){if(!this.ok())return;const ac=this.ac,t=ac.currentTime+.01,b=this.bus(pan,.3),o=this.osc('triangle',950,950,t,dur,.18,b,.1),l=ac.createOscillator(),lg=ac.createGain();l.frequency.value=1.7;lg.gain.value=380;l.connect(lg);lg.connect(o.frequency);l.start(t);l.stop(t+dur+.2);this.track(l)},
   /* temple bell: inharmonic partials with long ring */
@@ -622,9 +723,9 @@ const Snd={
     }
   },
   /* chakri spinner whirr */
-  whirr(pan,dur){
+  whirr(pan,dur,pitch=1){
     if(!this.ok('crackle'))return;const ac=this.ac,t=ac.currentTime+.01,n=this.noise(),bp=ac.createBiquadFilter(),g=ac.createGain(),lfo=ac.createOscillator(),lg=ac.createGain();
-    bp.type='bandpass';bp.Q.value=2.5;bp.frequency.setValueAtTime(900,t);bp.frequency.linearRampToValueAtTime(2600,t+dur);
+    bp.type='bandpass';bp.Q.value=2.5;bp.frequency.setValueAtTime(900*pitch,t);bp.frequency.linearRampToValueAtTime(2600*pitch,t+dur);
     lfo.frequency.setValueAtTime(8,t);lfo.frequency.linearRampToValueAtTime(26,t+dur);lg.gain.value=.5;g.gain.value=.5;lfo.connect(lg);lg.connect(g.gain);
     const e=ac.createGain();this.env(e,t,.1,.35,dur);n.connect(bp);bp.connect(g);g.connect(e);e.connect(this.bus(pan,.2));n.start(t);n.stop(t+dur+.3);lfo.start(t);lfo.stop(t+dur+.3);this.track(n);this.track(lfo);
     this.fizz(pan,0,dur);
@@ -896,7 +997,7 @@ function launch(type,tx,ty,o={}){
   const T=(38+(sy-ty)/H*50+rnd(-4,4))/(o.fast?1.4:1)/({slow:.7,normal:1,fast:1.5}[S.launchSpeed]||1);
   if(R.length>=42)return;
   R.push({sx,sy,tx,ty,T,t:0,x:sx,y:sy,type,pal:o.pal||S.pal,sc:o.sc||1,msg:o.msg});
-  Snd.launch(pan(sx),T*16.67/1000/Math.max(.2,S.speed));if(o.whistle)Snd.shrill(T*16.67/1000/Math.max(.2,S.speed),pan(sx));
+  Snd.launch(pan(sx),T*16.67/1000/Math.max(.2,S.speed));Hap.buzz([16]);if(o.whistle)Snd.shrill(T*16.67/1000/Math.max(.2,S.speed),pan(sx));
 }
 function fountain(x,o){
   const pal=o.pal||S.pal,m={x,y:o.y??H-6,age:0,dur:o.dur||190,cols:o.cols||pickCols(pal==='auto'?'gold':pal),cycle:o.cycle,ci:-1,tall:o.tall,cyc:o.cyc,two:o.two,spread:o.spread,spd:o.spd,wide:o.wide,size:o.size,gm:o.gm,strobe:o.strobe,rate:o.rate};EM.push(m);
@@ -916,8 +1017,8 @@ function candle(tx,ty,o){
   });
 }
 function finale(){
-  if(!gate('finale',7000)){toast('Finale already running');return}
-  toast('🎇 Happy Diwali! Grand finale!');if(S.dhol)Snd.dhol();Snd.bell(.8,0);
+  if(!gate('finale',7000)){toast(_t('Finale already running'));return}
+  toast(_t('🎇 Happy Diwali! Grand finale!'));if(S.dhol)Snd.dhol();Snd.bell(.8,0);
   const n=44;
   for(let i=0;i<n;i++){
     const t=i*(230-i*3.2);
@@ -935,7 +1036,7 @@ const PR=[];let prDirty=false,lastPropWarn=0;
 const GY=()=>Math.min(H*.8,H-140);
 function slab(c,x,y,w){c.fillStyle='#120708';c.beginPath();c.roundRect?c.roundRect(x-w/2,y,w,11,3):c.rect(x-w/2,y,w,11);c.fill();c.fillStyle='#b8862b';c.fillRect(x-w/2+2,y,w-4,2)}
 const ease=u=>u<0?0:u>1?1:u*u*(3-2*u);
-function propGuard(){if(PR.length>=5){if(performance.now()-lastPropWarn>1500){toast('Easy! Let the others finish first');lastPropWarn=performance.now()}return true}return false}
+function propGuard(){if(PR.length>=5){if(performance.now()-lastPropWarn>1500){toast(_t('Easy! Let the others finish first'));lastPropWarn=performance.now()}return true}return false}
 function capsule(c,x1,y1,x2,y2,w,col){c.strokeStyle=col;c.lineWidth=w;c.lineCap='round';c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke()}
 function rr(c,x,y,w,h,r){c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath()}
 /* draws a shaded forearm + fist gripping an item; (tipx,tipy) is where the item points; returns the tip after sliding */
@@ -1011,7 +1112,7 @@ function laddi(x,o={}){
             burst(m.x,m.y,SH.sphere(10),{cols:{list:[[40,100,62],[22,100,56],[0,0,96]]},speed:2.9,life:17,drag:.9,size:1.7,sc:1,crack:last&&k.sg>0});
             for(let b=0;b<2;b++)spawn(m.x,m.y,rnd(-2,2),rnd(-3,-.4),[0,85,46],{life:rnd(30,50),size:1.6,drag:.96,gm:1,line:false,fade:1.5})}
           flashAt(x,cy,[34,100,60],last?340:120,last?.8:.5);glowBurst(x,cy,[34,100,58],last?.7:.2);
-          Snd.bang(pan(x),0,last?1.3:.5+Math.random()*.25);if(last){addSmoke(x,cy,[34,100,58],true);if(S.shake)shakeAmt=Math.max(shakeAmt,9*SC)}
+          Snd.bang(pan(x),0,last?1.3:.5+Math.random()*.25,clamp(32/(o.Lc||32),.75,1.6));Hap.buzz(last?HAP.boom:[7]);if(last){addSmoke(x,cy,[34,100,58],true);if(S.shake)shakeAmt=Math.max(shakeAmt,9*SC)}
           this.bi++;this.next+=rnd(gap[0],gap[1])}
         if(this.bi>=n&&this.s<=0)this.ph=3;
       }else{this.end+=dt;if(this.end>40)return false}
@@ -1053,7 +1154,7 @@ function sutli(x){
           flashAt(x,by,[40,100,66],470,.95);glowBurst(x,by,[40,100,60],1.1);
           burst(x,by,SH.sphere(70),{cols:{list:[[48,60,92],[34,100,60]]},speed:9,life:26,drag:.9,size:2.6,sc:1,crack:true});
           for(let k=0;k<34;k++){const ang=rnd(0,TAU),v=rnd(1.5,7)*SC;spawn(x,by,Math.cos(ang)*v,Math.sin(ang)*v-2,pick([[0,80,45],[38,90,55],[30,30,85]]),{life:rnd(40,75),size:rnd(1.6,2.6),drag:.95,gm:1,line:false,fade:1.6})}
-          addSmoke(x,by,[40,100,60],true);addSmoke(x+20,by,[30,50,50],false);Snd.bang(pan(x),0,1.7);Snd.boom(.95,pan(x),0,40);Snd.crackle(10,pan(x),.12);if(S.shake)shakeAmt=Math.max(shakeAmt,15*SC)}}
+          addSmoke(x,by,[40,100,60],true);addSmoke(x+20,by,[30,50,50],false);Snd.bomb(pan(x),0,BANG.sutli);Snd.crackle(10,pan(x),.2);Hap.buzz(HAP.sutli);if(S.shake)shakeAmt=Math.max(shakeAmt,15*SC)}}
       else{this.ring+=dt;this.s=Math.max(0,this.s-dt/28);if(this.ring>20)return false}
     },
     draw(c){
@@ -1115,7 +1216,7 @@ function sparkler(tx,ty,o={}){
             const c=o.white?[50,12,97]:o.cycle?[(this.age*3)%360,100,66]:(Math.random()<.65?[46,100,72]:[50,25,96]);
             spawn(this.bx,this.by,Math.cos(ang)*v,Math.sin(ang)*v-.4,c,{life:rnd(12,28),size:rnd(.8,1.3),drag:.9,gm:.55,fade:1,flick:Math.random()<.2})}
           if(Math.random()<.35)spawn(this.bx,this.by,rnd(-3,3),rnd(-4,-1),[44,100,78],{life:rnd(20,40),size:1.2,drag:.93,gm:.9,fade:1.2,glit:.2});
-          if(++this.n%(o.crackle?6:14)===0)Snd.crackle(o.crackle?5:3,pn,0);if(this.n%9===0)glowBurst(this.bx,this.by,[44,100,62],.16)}
+          if(++this.n%(o.crackle?6:14)===0){Snd.crackle(o.crackle?5:3,pn,0);Hap.buzz([3])}if(this.n%9===0)glowBurst(this.bx,this.by,[44,100,62],.16)}
         if(this.age>=dur)this.ph=2;
       }else{this.s=Math.max(0,this.s-dt/30);if(this.s<=0)return false}
     },
@@ -1136,6 +1237,19 @@ function sparkler(tx,ty,o={}){
 }
 
 /* ================= 64 traditional crackers ================= */
+const BANG={
+  tick:{lv:9,vol:.7,f0:1100,f1:380,sl:.04,sg:.2,cf:5800,cq:.9,cg:.9,cd:.03,lp0:7000,lp1:1800,nl:.04,nm:.35,tg:0,ec:0,wet:.1},
+  sharp:{lv:4.2,vol:.9,f0:700,f1:220,sl:.07,sg:.3,cf:4800,cq:.7,cg:1,cd:.04,lp0:6500,lp1:1500,nl:.06,nm:.45,tg:0,ec:1,eg:.22,egain:.18,eLP:3200,wet:.15},
+  pop:{lv:2.8,vol:1,f0:260,f1:85,sl:.22,sg:.6,cf:2600,cg:.7,lp0:4200,lp1:420,nl:.28,nm:.6,tg:.1,tt:.7,tl:300,ec:1,eg:.3,egain:.28},
+  thud:{lv:2.4,vol:1,f0:150,f1:52,sl:.4,sg:.95,cf:800,cg:.3,cd:.08,lp0:1700,lp1:180,nl:.45,nm:.6,tg:.25,tt:1,tl:220,ec:1,eg:.35,egain:.35,eLP:420},
+  boom:{lv:1.7,vol:1.15,f0:115,f1:36,sl:.8,sg:1,cf:1900,cg:.8,lp0:3300,lp1:110,nl:1,nm:.85,tg:.45,tt:2.4,tl:280,ec:3,eg:.4,egain:.65,eLP:700,wet:.4},
+  doom:{lv:1.35,vol:1.25,f0:72,f1:27,sl:1.4,sg:1.15,cf:1300,cg:.5,cd:.07,lp0:2100,lp1:80,nl:1.4,nm:.9,tg:.6,tt:3.4,tl:200,ec:4,eg:.5,egain:.75,eLP:380,wet:.5},
+  crack:{lv:1.3,vol:1,hits:2,gap:.075,f0:520,f1:160,sl:.1,sg:.35,cf:3600,cq:.6,cg:1,cd:.05,lp0:6000,lp1:1200,nl:.08,nm:.5,tg:0,ec:1,eg:.25,egain:.2,eLP:2600},
+  whip:{lv:2.4,vol:1,f0:520,f1:110,sl:.12,sg:.4,cf:6200,cq:.6,cg:1.1,cd:.035,lp0:7500,lp1:1400,nl:.07,nm:.4,tg:0,ec:2,eg:.17,egain:.22,eLP:3600},
+  splash:{lv:2.3,vol:1.05,f0:200,f1:70,sl:.3,sg:.7,cf:1100,cq:.5,cg:.7,cd:.18,lp0:3800,lp1:300,nl:.55,nm:.7,tg:.15,tt:1.1,tl:500,ec:2,eg:.28,egain:.32,eLP:900},
+  triple:{lv:0.95,vol:.95,hits:3,gap:.085,f0:300,f1:95,sl:.18,sg:.55,cf:2800,cg:.7,lp0:4500,lp1:420,nl:.22,nm:.6,tg:.08,tt:.6,tl:300,ec:1,eg:.3,egain:.25},
+  sutli:{lv:1.9,vol:1.2,f0:140,f1:44,sl:.65,sg:1,cf:2200,cg:.85,lp0:3600,lp1:140,nl:.85,nm:.8,tg:.4,tt:2,tl:300,ec:3,eg:.36,egain:.55,eLP:760,wet:.4}
+};
 const CC={red:['#7a0f14','#e53935','#ff8a7a'],gold:['#8a6b10','#e6b422','#fff0a0'],blue:['#0d2a6b','#1e5fd8','#8fbcff'],brown:['#3b2210','#7b4a24','#b98a5e'],green:['#0b4a2a','#1faa59','#9be8b8'],pink:['#7d1250','#e0408a','#ffa6d0'],white:['#8d8d8d','#ececec','#ffffff'],black:['#0d0d0d','#2b2b2b','#5a5a5a'],terra:['#7a3015','#cf6a34','#f3a56a'],purple:['#3d1566','#7b3fc4','#c9a3ff'],orange:['#8a3a08','#f08a1f','#ffc784'],teal:['#064a52','#0fa3b1','#8be9ef']};
 const isGround=t=>GROUND.includes(t)||!!CKM[t];
 const groundPool=()=>GROUND.concat(CKIDS);
@@ -1182,14 +1296,18 @@ function groundProp(x,d){
   };
   PR.push(q);return q;
 }
-function miniPop(x,y,vol,hue,elec){for(let i=0;i<6;i++)spawn(x,y,rnd(-2.4,2.4),rnd(-3,-.3),[hue,elec?80:90,elec?80:72],{life:rnd(10,20),size:1,drag:.9,gm:.7,fade:1});flashAt(x,y,[hue,100,66],70,.45);Snd.snap(pan(x),vol)}
+function miniPop(x,y,vol,hue,elec){Hap.buzz([5]);for(let i=0;i<6;i++)spawn(x,y,rnd(-2.4,2.4),rnd(-3,-.3),[hue,elec?80:90,elec?80:72],{life:rnd(10,20),size:1,drag:.9,gm:.7,fade:1});flashAt(x,y,[hue,100,66],70,.45);Snd.snap(pan(x),vol,rnd(.8,1.3))}
 function bangFx(x,y,p){
-  const vol=p.vol||1,fl=p.flash||320;
-  flashAt(x,y,[40,100,66],fl,.9);glowBurst(x,y,[40,100,60],Math.min(1.1,.35+vol*.45));
+  const vol=p.vol||1,fl=p.flash||320,fc=p.fc||[40,100,66],pn=pan(x),dc=p.dcols||[[0,80,45],[38,90,55],[30,30,85]];
+  flashAt(x,y,fc,fl,.9);glowBurst(x,y,fc,Math.min(1.1,.35+vol*.45));
   if(p.sparks!==0)burst(x,y,SH.sphere(p.sparks||40),{cols:{list:p.cols||[[48,60,92],[34,100,60]]},speed:3+vol*4,life:22+vol*6,drag:.9,size:2.2,sc:1,crack:vol>1});
-  for(let k=0;k<(p.bits||22);k++){const ang=rnd(0,TAU),v=rnd(1.4,3+vol*3)*SC;spawn(x,y,Math.cos(ang)*v,Math.sin(ang)*v-2,pick([[0,80,45],[38,90,55],[30,30,85]]),{life:rnd(36,70),size:rnd(1.4,2.4),drag:.95,gm:1,line:false,fade:1.6})}
-  addSmoke(x,y,[40,100,60],vol>1);Snd.bang(pan(x),0,vol);if(vol>.9)Snd.boom(Math.min(1,vol*.6),pan(x),0,40);if(vol>.8)Snd.crackle(8,pan(x),.1);
-  if(S.shake&&vol>.6)shakeAmt=Math.max(shakeAmt,vol*9*SC);
+  for(let k=0;k<(p.bits||22);k++){const ang=rnd(0,TAU),v=rnd(1.4,3+vol*3)*SC;spawn(x,y,Math.cos(ang)*v,Math.sin(ang)*v-2,pick(dc),{life:rnd(36,70),size:rnd(1.4,2.4),drag:.95,gm:1,line:false,fade:1.6})}
+  if(p.splash)for(let k=0;k<46;k++){const a=-Math.PI/2+rnd(-1.25,1.25),v=rnd(2,7.5)*SC;spawn(x,y,Math.cos(a)*v,Math.sin(a)*v,[200,rnd(40,85),rnd(72,94)],{life:rnd(42,84),size:rnd(1.3,2.3),drag:.96,gm:1.4,line:false,fade:1.4})}
+  for(let d=0,n=p.dust||(vol>1?1:0);d<n;d++)addSmoke(x+rnd(-24,24)*SC,y+rnd(-6,10),[30,40,50],true);
+  if(!p.dust&&vol<=1)addSmoke(x,y,fc,false);
+  Snd.bomb(pn,0,BANG[p.snd||'pop']||BANG.pop);if(vol>.8)Snd.crackle(8,pn,.12);
+  Hap.buzz(HAP[p.snd||'pop']||HAP.pop);
+  if(S.shake&&vol>.4)shakeAmt=Math.max(shakeAmt,(p.shk??vol*9)*SC);
 }
 const ringFx=(c,q,r0)=>{const u=Math.min(1,q.t/18);c.globalCompositeOperation='lighter';c.strokeStyle=`rgba(255,226,170,${(.75*(1-u)).toFixed(2)})`;c.lineWidth=6*(1-u)+1;c.beginPath();c.arc(q.x,q.gy-(q.d.h||30)*q.sc/2,u*r0*q.sc,0,TAU);c.stroke();c.globalCompositeOperation='source-over'};
 
@@ -1230,8 +1348,8 @@ function sparklerCk(x,y,p){sparkler(x,clamp(y,H*.3,H*.7),p)}
 function fountainProp(x,p){
   const fo=p.fo||{},cols=fo.list?{list:fo.list}:fo.pal?pickCols(fo.pal):undefined;
   groundProp(x,{shape:p.shape||'pot',w:p.w||48,h:p.h||56,col:p.col||'terra',bands:p.bands||(p.shape==='pot'||!p.shape?[[.34,.26,'#b3261e']]:null),deco:p.deco,label:p.label,wick:p.wick||16,hold:40,slab:p.slab||100,
-    ignite(q){q.em=fountain(x,{y:q.gy-(p.h||56)*q.sc-6*q.sc,dur:fo.dur||330,cycle:fo.cycle,cyc:fo.cyc,tall:fo.tall,cols,two:fo.two,spread:fo.spread,spd:fo.spd,wide:fo.wide,size:fo.size,gm:fo.gm,strobe:fo.strobe,rate:fo.rate,pal:'auto'});flashAt(x,q.gy-(p.h||56)*q.sc,[40,100,66],160,.5)},
-    tick(q){return q.em.age<q.em.dur},
+    ignite(q){Snd.roar(pan(x),(fo.dur||330)/60,((p.h||56)/56)*(fo.rate||1)*(fo.spd||1));q.em=fountain(x,{y:q.gy-(p.h||56)*q.sc-6*q.sc,dur:fo.dur||330,cycle:fo.cycle,cyc:fo.cyc,tall:fo.tall,cols,two:fo.two,spread:fo.spread,spd:fo.spd,wide:fo.wide,size:fo.size,gm:fo.gm,strobe:fo.strobe,rate:fo.rate,pal:'auto'});flashAt(x,q.gy-(p.h||56)*q.sc,[40,100,66],160,.5)},
+    tick(q,dt){if((q.hz=(q.hz||0)+dt)>16){q.hz=0;Hap.buzz([5])}return q.em.age<q.em.dur},
     over(c,q){if(q.ph===3&&q.em){const u=q.em.age/q.em.dur;glowAt(c,x,q.gy-(p.h||56)*q.sc-6*q.sc,(26+10*Math.random())*q.sc,q.em.cols.list[0],.5*(1-u*.6))}}});
 }
 function spinnerProp(x,p){
@@ -1254,13 +1372,13 @@ function spinnerProp(x,p){
       if(p.deco==='swastik'){c.strokeStyle='#fff3c4';c.lineWidth=r*.1;c.lineCap='butt';c.beginPath();c.moveTo(-r*.55,0);c.lineTo(r*.55,0);c.moveTo(0,-r*.55);c.lineTo(0,r*.55);c.moveTo(r*.55,0);c.lineTo(r*.55,-r*.3);c.moveTo(0,r*.55);c.lineTo(r*.3,r*.55);c.moveTo(-r*.55,0);c.lineTo(-r*.55,r*.3);c.moveTo(0,-r*.55);c.lineTo(-r*.3,-r*.55);c.stroke();c.fillStyle='#fff3c4';for(const [dx,dy] of[[.3,-.3],[.3,.3],[-.3,.3],[-.3,-.3]]){c.beginPath();c.arc(dx*r,dy*r,r*.06,0,TAU);c.fill()}}
       if(p.deco==='fancy'){c.fillStyle='#fff3c4';for(let i=0;i<6;i++){c.beginPath();c.ellipse(Math.cos(i*TAU/6)*r*.45,Math.sin(i*TAU/6)*r*.45,r*.2,r*.1,i*TAU/6,0,TAU);c.fill()}}
       c.fillStyle='#fff3c4';c.beginPath();c.arc(0,0,r*.1,0,TAU);c.fill();c.restore()},
-    ignite(q){q.ang=0;q.u=0;q.lift=0;q.dx=0;q.cols=pickCols(p.pal||'diwali');Snd.whirr(pan(x),dur/60)},
+    ignite(q){q.ang=0;q.u=0;q.lift=0;q.dx=0;q.cols=pickCols(p.pal||'diwali');Snd.whirr(pan(x),dur/60,clamp(26/(p.r||26),.7,1.4))},
     tick(q,dt){q.u+=dt;q.ang+=dt*(.35+.55*Math.min(1,q.u/30))*(p.fast?1.5:1)*(ky?1.4:1);
       if(ky){const u=Math.max(0,Math.min(1,(q.u-34)/110));q.lift=u*(H*.3)+Math.sin(q.u*.05)*6;q.dx=Math.sin(q.u*.03)*30*u}
       const yy=q.gy-6*sc-(q.lift||0)-(ky&&q.lift>4?14*sc:r*.1),xx=x+(q.dx||0),n=Math.max(2,Math.round(4*S.density*Q.dens));
       for(let j=0;j<n;j++){const an=q.ang+(j%3)*TAU/3,cl=q.cols.rainbow?[rnd(0,360),100,60]:q.cols.list[(Math.random()*q.cols.list.length)|0],sp=rnd(3.5,7)*SC;
         const px=xx+Math.cos(an)*r*.85,py=yy+Math.sin(an)*r*.3;spawn(px,py,-Math.sin(an)*sp,Math.cos(an)*sp*.55-rnd(.4,2),cl,{life:rnd(18,36),size:1.5,drag:.94,gm:.9,fade:1.7,flick:Math.random()<.2})}
-      if(q.u%9<1)glowBurst(xx,yy,q.cols.list[0],.2);return q.u<dur}});
+      if(q.u%9<1)glowBurst(xx,yy,q.cols.list[0],.2);if((q.hz=(q.hz||0)+dt)>14){q.hz=0;Hap.buzz([4])}return q.u<dur}});
 }
 function bombProp(x,p){groundProp(x,{shape:p.shape||'cyl',w:p.w||24,h:p.h||40,col:p.col||'red',bands:p.bands,label:p.label,lcol:p.lcol,wick:p.wick===undefined?24:p.wick,hold:34,fuse:p.fuse||50,vanish:true,
   ignite(q){q.t=0;bangFx(x,q.gy-(p.h||40)*q.sc/2,p)},tick(q,dt){return q.t<18},over(c,q){if(q.ph>=3)ringFx(c,q,p.ring||120)}});}
@@ -1293,7 +1411,7 @@ const CKF={
 };
 let ckT=0,ckHide=0,ckCur=null;
 function fillCkCard(r){const el=$('#ckcard');el.textContent='';const mk=(t,c,tx)=>{const e=document.createElement(t);if(c)e.className=c;e.textContent=tx;return e};
-  el.append(mk('b','',`${r.no}. ${r.n}`),mk('span','alt',r.a),mk('p','',r.v),mk('p','fx','Effect: '+r.e))}
+  el.append(mk('b','',`${r.no}. ${ckn(r)}`),mk('span','alt',cka(r)),mk('p','',ckv(r)),mk('p','fx',_t('Effect: ')+cke(r)))}
 function closeCkCard(){$('#ckcard').classList.remove('show');$('#ckInfo').classList.remove('on');clearTimeout(ckT)}
 function showCkCard(r){ckCur=r;closeCkCard();$('#ckInfo').classList.add('show');clearTimeout(ckHide);ckHide=setTimeout(()=>{$('#ckInfo').classList.remove('show');closeCkCard()},30000)}
 $('#ckInfo').onclick=()=>{const c=$('#ckcard');if(c.classList.contains('show')){closeCkCard();return}if(!ckCur)return;fillCkCard(ckCur);c.classList.add('show');$('#ckInfo').classList.add('on');clearTimeout(ckT);ckT=setTimeout(closeCkCard,15000)};
@@ -1326,17 +1444,17 @@ const CK=[
 ['Disco Wheel','Disco Chakri','Decorative flat spinner, approximately 5–10 cm.','Colourful spinning effect.','ch','spinner',{r:30,deco:'disco',pal:'rainbow',fast:true}],
 ['Fancy Spinner','Fancy Chakkar','Decorative circular or shaped novelty, approximately 5–12 cm.','Rotational visual effect.','ch','spinner',{r:30,deco:'fancy',sec:['#6a1b9a','#ff80ab']}],
 ['Star Wheel','Star Chakri','Small decorative wheel with star-shaped artwork.','Rotating spark display.','ch','spinner',{r:26,deco:'star',sec:['#0d47a1','#1976d2']}],
-['Bijli','Bijli Patakha','Small paper-wrapped compact cracker, approximately 2–5 cm long.','Sharp popping report.','bo','bomb',{shape:'cyl',w:12,h:28,col:'red',bands:[[.3,.1]],vol:.55,flash:170,sparks:0,bits:14}],
-['Laxmi Bomb','Lakshmi Bomb','Small cylindrical or capsule-shaped paper package.','Single loud report.','bo','bomb',{shape:'capsule',w:22,h:36,col:'gold',bands:[[.25,.1,'#b3261e']],vol:1.05,flash:300}],
-['Atom Bomb','Atom Bomb Patakha','Compact, relatively stout paper-wrapped package.','Pronounced single report.','bo','bomb',{shape:'cyl',w:32,h:34,col:'brown',bands:[[.25,.12,'#e6b422']],label:'ATOM',vol:1.35,flash:380,ring:150}],
-['Hydro Bomb','Hydro Patakha','Compact cylindrical packaged cracker, often with blue-themed artwork.','Loud report.','bo','bomb',{shape:'cyl',w:24,h:38,col:'blue',bands:[[.3,.1,'#fff']],label:'HYDRO',vol:1.15,flash:320}],
+['Bijli','Bijli Patakha','Small paper-wrapped compact cracker, approximately 2–5 cm long.','Sharp popping report.','bo','bomb',{shape:'cyl',w:12,h:28,col:'red',bands:[[.3,.1]],vol:.55,flash:170,sparks:0,bits:14,snd:'sharp',fc:[48,100,82]}],
+['Laxmi Bomb','Lakshmi Bomb','Small cylindrical or capsule-shaped paper package.','Single loud report.','bo','bomb',{shape:'capsule',w:22,h:36,col:'gold',bands:[[.25,.1,'#b3261e']],vol:1.05,flash:300,snd:'pop'}],
+['Atom Bomb','Atom Bomb Patakha','Compact, relatively stout paper-wrapped package.','Pronounced single report.','bo','bomb',{shape:'cyl',w:32,h:34,col:'brown',bands:[[.25,.12,'#e6b422']],label:'ATOM',vol:1.35,flash:380,ring:150,snd:'boom',dust:2,shk:13,fc:[50,40,95]}],
+['Hydro Bomb','Hydro Patakha','Compact cylindrical packaged cracker, often with blue-themed artwork.','Loud report.','bo','bomb',{shape:'cyl',w:24,h:38,col:'blue',bands:[[.3,.1,'#fff']],label:'HYDRO',vol:1.15,flash:320,snd:'splash',splash:true,fc:[205,90,76],cols:[[200,60,90],[212,90,70]],dcols:[[205,60,85],[215,80,70],[0,0,95]],sparks:24}],
 ['Sutli Bomb','Rassi Bomb, Sutli Patakha','Rounded or cylindrical exterior with distinctive jute-like twine wrapping.','Single loud report.','bo','sutli',{}],
-['Chocolate Bomb','Chocolate Patakha','Small rounded or compact cylindrical novelty with chocolate-inspired graphics.','Sharp popping report.','bo','bomb',{shape:'round',w:24,h:24,col:'brown',bands:[[.4,.16,'#e6b422']],vol:.8,flash:230}],
-['Bullet Bomb','Bullet Patakha','Small bullet-shaped or cylindrical paper package.','Sharp report.','bo','bomb',{shape:'bullet',w:16,h:34,col:'gold',bands:[[.7,.1,'#7a0f14']],vol:.7,flash:200}],
-['555 Bomb','555 Patakha','Compact package with prominent numerical branding.','Single report.','bo','bomb',{shape:'cyl',w:26,h:34,col:'green',label:'555',vol:1,flash:300}],
-['Kuruvi Vedi','Kurivi Vedi','Small South Indian market-style sound cracker; appearance varies.','Sound effect.','bo','bomb',{shape:'cyl',w:9,h:20,col:'terra',vol:.42,flash:110,sparks:0,bits:8,wick:16}],
-['Maroons','Maroon Bomb','Compact cylindrical or rounded package.','Deep single report.','bo','bomb',{shape:'round',w:34,h:32,col:'black',bands:[[.45,.12,'#b3261e']],vol:1.5,flash:420,ring:170,sparks:20}],
-['Chinese Cracker','Chinese Patakha','Small paper-wrapped cylindrical package.','Sharp popping sound.','bo','bomb',{shape:'cyl',w:13,h:30,col:'red',bands:[[.5,.12,'#e6b422']],vol:.75,flash:180,sparks:30}],
+['Chocolate Bomb','Chocolate Patakha','Small rounded or compact cylindrical novelty with chocolate-inspired graphics.','Sharp popping report.','bo','bomb',{shape:'round',w:24,h:24,col:'brown',bands:[[.4,.16,'#e6b422']],vol:.8,flash:230,snd:'thud',fc:[28,70,52],sparks:0,dcols:[[24,55,30],[28,60,42],[30,30,62]],bits:34}],
+['Bullet Bomb','Bullet Patakha','Small bullet-shaped or cylindrical paper package.','Sharp report.','bo','bomb',{shape:'bullet',w:16,h:34,col:'gold',bands:[[.7,.1,'#7a0f14']],vol:.7,flash:200,snd:'whip',fc:[44,100,78]}],
+['555 Bomb','555 Patakha','Compact package with prominent numerical branding.','Single report.','bo','bomb',{shape:'cyl',w:26,h:34,col:'green',label:'555',vol:1,flash:300,snd:'triple',fc:[130,90,72]}],
+['Kuruvi Vedi','Kurivi Vedi','Small South Indian market-style sound cracker; appearance varies.','Sound effect.','bo','bomb',{shape:'cyl',w:9,h:20,col:'terra',vol:.42,flash:110,sparks:0,bits:8,wick:16,snd:'tick'}],
+['Maroons','Maroon Bomb','Compact cylindrical or rounded package.','Deep single report.','bo','bomb',{shape:'round',w:34,h:32,col:'black',bands:[[.45,.12,'#b3261e']],vol:1.5,flash:420,ring:170,sparks:20,snd:'doom',dust:4,shk:18,ring:240,fc:[30,60,62]}],
+['Chinese Cracker','Chinese Patakha','Small paper-wrapped cylindrical package.','Sharp popping sound.','bo','bomb',{shape:'cyl',w:13,h:30,col:'red',bands:[[.5,.12,'#e6b422']],vol:.75,flash:180,sparks:30,snd:'crack',cols:[[0,100,58],[44,100,64],[0,0,96]],sparks:46,fc:[8,100,64]}],
 ['Ladi','Lar, Ladi Patakha, Saravedi','Connected paper garland, approximately 0.5–3 metres in bundled consumer examples.','Repeated popping sequence.','la','ladi',{}],
 ['100 Wala','Sau Wali Ladi','Bundle of connected small paper-wrapped units.','Repeated rapid reports.','la','ladi',{levels:9,len:.3,Lc:26,Wc:8}],
 ['500 Wala','Panch Sau Wali Ladi','Longer connected cracker garland.','Extended sequence of reports.','la','ladi',{levels:16,len:.46,Lc:24,Wc:7,gap:[3,5]}],
@@ -1372,14 +1490,14 @@ const CKCATS=[['all','All 64'],['sp','Sparklers'],['fo','Fountains'],['ch','Spin
 let ckCat='all';
 function buildCrackers(){
   const cr=$('#ckcats'),g=$('#ckgrid');if(!cr||!g)return;cr.textContent='';g.textContent='';
-  for(const [k,n] of CKCATS){const b=document.createElement('button');b.className='pill'+(ckCat===k?' on':'');b.textContent=n;b.onclick=()=>{ckCat=k;buildCrackers()};cr.appendChild(b)}
+  for(const [k,n] of CKCATS){const b=document.createElement('button');b.className='pill'+(ckCat===k?' on':'');b.textContent=_t(n);b.onclick=()=>{ckCat=k;buildCrackers()};cr.appendChild(b)}
   for(const r of CKL){if(ckCat!=='all'&&r.c!==ckCat)continue;const b=document.createElement('button');b.className='chip'+(S.type===r.id?' on':'');b.title=r.a;
-    const nb=document.createElement('b');nb.textContent=r.no;b.append(nb,r.n);b.onclick=()=>{S.type=r.id;save();buildDock();toast(r.n);previewShell(r.id)};g.appendChild(b)}
+    const nb=document.createElement('b');nb.textContent=r.no;b.append(nb,ckn(r));b.onclick=()=>{S.type=r.id;save();buildDock();toast(ckn(r));previewShell(r.id)};g.appendChild(b)}
 }
 let showBusy=false;
 function mulberry(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
 function runShow(seed,name){
-  if(showBusy){toast('A show is already running');return}
+  if(showBusy){toast(_t('A show is already running'));return}
   const rng=mulberry(seed),R_=()=>rng(),rp=a=>a[(R_()*a.length)|0],types=RANDOM_TYPES,pals=['diwali','gold','pink','green','cyan','purple','fire','rainbow'];
   const items=[];let t=800;
   const shot=(tt,type,fx,fy,pal,sc)=>items.push({t:tt,type,fx,fy,pal,sc});
@@ -1397,11 +1515,11 @@ function runShow(seed,name){
   });
   later(total,()=>{showBusy=false});
 }
-function grandShow(){runShow((Math.random()*1e9)|0,'🎆 Grand show – about 70 seconds')}
-function todaysShow(){const d=new Date(),seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();runShow(seed,"📅 Today's show – "+d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}))}
+function grandShow(){runShow((Math.random()*1e9)|0,_t('🎆 Grand show – about 70 seconds'))}
+function todaysShow(){const d=new Date(),seed=d.getFullYear()*10000+(d.getMonth()+1)*100+d.getDate();runShow(seed,_t("📅 Today's show – ")+d.toLocaleDateString(S.lang==='en'?undefined:S.lang+'-IN',{day:'numeric',month:'short',year:'numeric'}))}
 let cdBusy=false;
 function countdown(){
-  if(cdBusy||showBusy){toast('Please wait for the current show');return}
+  if(cdBusy||showBusy){toast(_t('Please wait for the current show'));return}
   cdBusy=showBusy=true;document.body.classList.remove('ctrl');const el=$('#cd');let n=10;
   const pop=(txt,end)=>{el.textContent=txt;el.className='';void el.offsetWidth;el.className=end?'end endpop':'pop'};
   const tick=()=>{
@@ -1415,9 +1533,9 @@ const shareBase=()=>String(window.FW_SHARE_BASE||location.href).split('#')[0];
 async function shareGreeting(){
   const msg=wishText(),url=shareBase()+'#wish-'+enc({m:msg,p:hasOwn(PALS,S.pal)?S.pal:'diwali'}),box=$('#shareLink');
   box.value=url;box.hidden=false;
-  if(navigator.share){try{await navigator.share({title:'Happy Diwali',text:`“${msg}” – open to watch the fireworks write it in the sky`,url});toast('Shared!');return}catch(e){if(e&&e.name==='AbortError')return}}
-  try{await navigator.clipboard.writeText(url);toast('Link copied – paste it to a friend');return}catch(e){}
-  box.focus();box.select();toast('Copy the link from the box');
+  if(navigator.share){try{await navigator.share({title:'Happy Diwali',text:`“${msg}” – open to watch the fireworks write it in the sky`,url});toast(_t('Shared!'));return}catch(e){if(e&&e.name==='AbortError')return}}
+  try{await navigator.clipboard.writeText(url);toast(_t('Link copied – paste it to a friend'));return}catch(e){}
+  box.focus();box.select();toast(_t('Copy the link from the box'));
 }
 function readGreeting(){
   const h=location.hash,m=h.match(/^#wish-([0-9a-f]{2,700})$/i);
@@ -1624,7 +1742,7 @@ function frame(now){
 const MSGS=['HAPPY DIWALI','शुभ दीपावली','DIWALI','LIGHTS!','HAPPY DIWALI'];
 function autoStep(){
   const r=Math.random();
-  if(S.skyAuto&&r<.07){launch('text',rnd(W*.3,W*.7),rnd(H*.25,H*.4),{pal:pick(['diwali','gold','rainbow']),sc:1,msg:S.skyText===DEFAULTS.skyText?pick(MSGS):S.skyText})}
+  if(S.skyAuto&&r<.07){launch('text',rnd(W*.3,W*.7),rnd(H*.25,H*.4),{pal:pick(['diwali','gold','rainbow']),sc:1,msg:Object.values(LANGDEF).some(d=>d.skyText===S.skyText)?pick(LMSGS[S.lang]||LMSGS.en):S.skyText})}
   else if(S.volley&&r<.2){volley(Math.random()<.5?'random':pick(RANDOM_TYPES),3+(Math.random()*3|0))}
   else if(r<.3)launch(pick(groundPool()),rnd(W*.1,W*.9),H*.4,{});
   else launch('random',rnd(W*.08,W*.92),rnd(H*.12,H*.55),{sc:rnd(.8,1.25)});
@@ -1680,6 +1798,7 @@ function bakeMarquee(){
    ===================================================================== */
 const SCHEMA={
   Show:[
+    ['h','Language'],['lang','select','Language',LANGS],
     ['h','Behaviour'],['autoShow','check','Auto show'],['autoRate','range','Auto show intensity',.3,3,.1],['volley','check','Volleys & combos'],['launchSpeed','select','Launch speed',[['slow','Slow'],['normal','Normal'],['fast','Fast']]],
     ['h','Physics'],['gravity','range','Gravity',.2,2.2,.05],['wind','range','Wind',-1,1,.05],['speed','range','Time speed (slow-mo)',.2,2,.05],
     ['h','Look'],['density','range','Particle density',.3,2,.1],['size','range','Burst size',.6,1.6,.05],['trail','range','Trail length',1,10,1],
@@ -1690,7 +1809,7 @@ const SCHEMA={
     ['h','Volume'],['sound','check','Sound on'],['vol','range','Master volume',0,1,.01],['sfxVol','range','Effects volume',0,1,.01],['musicVol','range','Music volume',0,1,.01],
     ['h','Sound style'],['soundStyle','select','Style',[['real','Realistic'],['arcade','Arcade 8-bit'],['bells','Temple bells']]],
     ['h','Layers'],['boomMode','select','Boom',[['auto','Auto (sometimes double)'],['single','Single boom'],['double','Double boom']]],['whistle','check','Launch whistle'],['thump','check','Mortar launch thump'],['boom','check','Explosion boom'],['crackle','check','Crackle, fizz & sizzle'],
-    ['crowd','check','Crowd ooh / aah / cheers'],['ambience','check','Night ambience (wind & crickets)'],['uiSound','check','Button click sounds'],['samples','check','Use recorded booms from sounds/ folder'],['realDelay','check','Realistic sound delay'],['dhol','check','Dhol drums on finale'],['music','check','Festive music (generative)'],['musicStyle','select','Music style',[['diwali','Diwali raga & tabla'],['ambient','Ambient pads']]],
+    ['crowd','check','Crowd ooh / aah / cheers'],['ambience','check','Night ambience (wind & crickets)'],['uiSound','check','Button click sounds'],['haptics','check','Haptic feedback (phone vibration)'],['hapPow','range','Vibration strength',.4,1.6,.1],['note','Vibration works on Android phones. iPhones do not allow web pages to vibrate.'],['btn','📳 Test vibration','hap'],['samples','check','Use recorded booms from sounds/ folder'],['realDelay','check','Realistic sound delay'],['dhol','check','Dhol drums on finale'],['music','check','Festive music (generative)'],['musicStyle','select','Music style',[['diwali','Diwali raga & tabla'],['ambient','Ambient pads']]],
     ['btn','🔔 Test sound','test']
   ],
   Text:[
@@ -1734,21 +1853,21 @@ function sanitizeSettings(){
 }
 function buildPanel(){
   const tabs=$('#tabs'),body=$('#tabBody');tabs.innerHTML='';
-  for(const t of Object.keys(SCHEMA)){const b=document.createElement('button');b.textContent=t;b.className=t===curTab?'on':'';b.onclick=()=>{curTab=t;buildPanel()};tabs.appendChild(b)}
+  for(const t of Object.keys(SCHEMA)){const b=document.createElement('button');b.textContent=_t(t);b.className=t===curTab?'on':'';b.onclick=()=>{curTab=t;buildPanel()};tabs.appendChild(b)}
   {const x=document.createElement('button');x.textContent='✕';x.className='xbtn';x.setAttribute('aria-label','Close');x.onclick=()=>$('#panel').classList.remove('open');tabs.appendChild(x)}
   body.innerHTML='';
   for(const r of SCHEMA[curTab]){
     const [k,type,label,a,b,c,wide]=r;
-    if(k==='h'){const d=document.createElement('div');d.className='h';d.textContent=type;body.appendChild(d);continue}
-    if(k==='note'){const d=document.createElement('div');d.className='note';d.textContent=type;body.appendChild(d);continue}
-    if(k==='btn'){const bt=document.createElement('button');bt.className='btn';bt.style.width='100%';bt.style.margin='8px 0';bt.textContent=type;bt.onclick=()=>actions[label]();body.appendChild(bt);continue}
-    const f=document.createElement('div');f.className='f'+(wide?' wide':'');const l=document.createElement('label');l.textContent=label;f.appendChild(l);
+    if(k==='h'){const d=document.createElement('div');d.className='h';d.textContent=_t(type);body.appendChild(d);continue}
+    if(k==='note'){const d=document.createElement('div');d.className='note';d.textContent=_t(type);body.appendChild(d);continue}
+    if(k==='btn'){const bt=document.createElement('button');bt.className='btn';bt.style.width='100%';bt.style.margin='8px 0';bt.textContent=_t(type);bt.onclick=()=>actions[label]();body.appendChild(bt);continue}
+    const f=document.createElement('div');f.className='f'+(wide?' wide':'');const l=document.createElement('label');l.textContent=_t(label);f.appendChild(l);
     let el;
     if(type==='check'){el=document.createElement('input');el.type='checkbox';el.checked=!!S[k];el.onchange=()=>set(k,el.checked)}
     else if(type==='range'){el=document.createElement('input');el.type='range';el.min=a;el.max=b;el.step=c;el.value=S[k];el.oninput=()=>set(k,+el.value)}
     else if(type==='text'){el=document.createElement('input');el.type='text';el.value=S[k];el.maxLength=120;el.oninput=()=>set(k,el.value)}
     else if(type==='color'){el=document.createElement('input');el.type='color';el.value=S[k];el.oninput=()=>set(k,el.value)}
-    else if(type==='select'){el=document.createElement('select');for(const [v,n] of a){const o=document.createElement('option');o.value=v;o.textContent=n;if(S[k]===v)o.selected=true;el.appendChild(o)}el.onchange=()=>set(k,el.value)}
+    else if(type==='select'){el=document.createElement('select');for(const [v,n] of a){const o=document.createElement('option');o.value=v;o.textContent=k==='lang'?n:_t(n);if(S[k]===v)o.selected=true;el.appendChild(o)}el.onchange=()=>set(k,el.value)}
     f.appendChild(el);body.appendChild(f);
   }
 }
@@ -1759,11 +1878,13 @@ function set(k,v){
   if(['theme','skyline','stars','moon','skyH'].includes(k))drawScene();
   if(k==='diyas'||k==='lanterns')buildDeco();
   if(k==='cityFront')applyMisc();
+  if(k==='lang'){applyLang();return}
   if(['ambience','uiSound','samples'].includes(k)){Snd.apply();if(k==='samples'&&v){Snd.init();Snd.loadSamples()}}
   if(['quality','showFps','bloom','smoke'].includes(k))applyQ();
 }
 const actions={
   test(){Snd.init();Snd.launch(0,.7);setTimeout(()=>Snd.boom(.8,0,0,40),750);setTimeout(()=>Snd.crackle(18,0,0),1100);setTimeout(()=>Snd.crowd('ooh'),1500)},
+  hap(){Hap.buzz(HAP.boom,true)},
   sky(){launch('text',W/2,H*.32,{pal:S.pal==='auto'?'rainbow':S.pal,sc:1})},
   reset(){Object.assign(S,DEFAULTS);save();buildPanel();buildDock();applyMarquee();drawScene();Snd.apply();syncMute();syncAuto()}
 };
@@ -1781,12 +1902,12 @@ function buildDock(){
   buildCrackers();
   const tr=$('#types');tr.innerHTML='';
   Object.entries(TYPES).forEach(([k,t],i)=>{
-    const b=document.createElement('button');b.className='chip'+(S.type===k?' on':'');b.textContent=t.n;
-    b.onclick=()=>{S.type=k;save();buildDock();toast(t.n);previewShell(k)};tr.appendChild(b)});
+    const b=document.createElement('button');b.className='chip'+(S.type===k?' on':'');b.textContent=_t(t.n);
+    b.onclick=()=>{S.type=k;save();buildDock();toast(_t(t.n));previewShell(k)};tr.appendChild(b)});
   const pr=$('#pals');pr.innerHTML='';
   for(const [k,p] of Object.entries(PALS)){
-    const b=document.createElement('button');b.className='chip pal'+(S.pal===k?' on':'');b.innerHTML=`<i style="background:${p.c}"></i>${p.n}`;
-    b.onclick=()=>{S.pal=k;save();buildDock();toast(p.n);previewShell(isGround(S.type)||S.type==='text'?'peony':S.type,true)};pr.appendChild(b)}
+    const b=document.createElement('button');b.className='chip pal'+(S.pal===k?' on':'');b.innerHTML=`<i style="background:${p.c}"></i>`;b.append(_t(p.n));
+    b.onclick=()=>{S.pal=k;save();buildDock();toast(_t(p.n));previewShell(isGround(S.type)||S.type==='text'?'peony':S.type,true)};pr.appendChild(b)}
 }
 function buildDeco(){
   const d=$('#diyas');d.innerHTML='';d.style.display=S.diyas?'flex':'none';
@@ -1795,8 +1916,23 @@ function buildDeco(){
   [[1.2,26,0],[6.5,52,-1.2],[93,26,-.6],[87.5,52,-1.8]].forEach(([x,len,dl])=>{const e=document.createElement('div');e.className='lantern';e.style.left=x+'%';e.style.setProperty('--len',len+'px');e.style.setProperty('--d',dl+'s');e.innerHTML='<i></i>';l.appendChild(e)});
 }
 function applyMisc(){cityc.style.zIndex=S.cityFront?3:1}
-function syncMute(){$('#bMute').textContent=S.sound?'🔊 Sound on':'🔇 Muted';$('#bMute').classList.toggle('on',!S.sound)}
-function syncAuto(){$('#bAuto').classList.toggle('on',S.autoShow);$('#bAuto').textContent=S.autoShow?'⏸ Auto show':'▶ Auto show'}
+const STATIC=[['#bFull','⛶ Full screen'],['#bControls','⚙ Controls'],['#title','Happy Diwali'],['#blurb','Light up the festival sky – anars, chakris, laddis, rockets and sky-writing, with dhol, temple bells and the crackle of crackers.'],['#goSound','🔊 Start with sound'],['#goMute','Start muted'],['#c1','Made with care by the'],['#c2','Enjoy this fun game!'],['#hint','Tap or hold on the sky · ☰ Controls for shells, colours & shows · Space = random shell · G = finale · H = hide UI'],
+ ['#dtabs [data-t=shells]','Shells'],['#dtabs [data-t=crackers]','Crackers'],['#dtabs [data-t=colours]','Colours'],['#dtabs [data-t=shows]','Shows'],['#dtabs [data-t=wish]','Wish'],
+ ['#bFinale','🎇 Finale'],['#bGrand','🎆 Grand show'],['#bToday',"📅 Today's show"],['#bCount','⏱ Countdown'],['#bVolley','💥 Volley'],['#bGround','⛲ Ground fx'],['#bText','🔤 Sky text'],['#bClear','🧹 Clear sky'],['#bShot','📷 Save photo'],['#bSettings','⚙ Settings'],['#bHide','👁 Hide UI'],['#bWrite','✍ Write in sky'],['#bShare','🔗 Share greeting']];
+function syncLangTexts(){for(const k of ['skyText','cdText','mqText'])if(Object.values(LANGDEF).some(d=>d[k]===S[k]))S[k]=LANGDEF[S.lang][k]}
+function buildLangRow(){const r=$('#langRow');r.textContent='';for(const [k,n] of LANGS){const b=document.createElement('button');b.textContent=n;b.className=S.lang===k?'on':'';b.lang=k;b.onclick=()=>{S.lang=k;save();applyLang()};r.appendChild(b)}}
+function applyLang(){
+  document.documentElement.lang=S.lang;syncLangTexts();
+  for(const [sel,k] of STATIC){const e=document.querySelector(sel);if(e)e.textContent=_t(k)}
+  $('#wish').placeholder=_t('Type a wish, e.g. Happy Diwali');
+  $('#clearBtn').title=$('#clearBtn').ariaLabel=_t('Clear screen');
+  buildLangRow();buildPanel();buildDock();syncMute();syncAuto();
+  if(typeof greetNow!=='undefined'&&greetNow)$('#greet').textContent=_t('💌 You have a greeting: ')+'“'+greetNow.m+'”';
+  if(S.lang!=='en'&&document.fonts&&document.fonts.load){document.fonts.load('700 40px Hind','शुभ');document.fonts.load('400 40px "Yatra One"','शुभ')}
+  if($('#ckcard').classList.contains('show')&&ckCur)fillCkCard(ckCur);
+}
+function syncMute(){$('#bMute').textContent=_t(S.sound?'🔊 Sound on':'🔇 Muted');$('#bMute').classList.toggle('on',!S.sound)}
+function syncAuto(){$('#bAuto').classList.toggle('on',S.autoShow);$('#bAuto').textContent=_t(S.autoShow?'⏸ Auto show':'▶ Auto show')}
 let toastT=0;
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),1600)}
 
@@ -1814,12 +1950,14 @@ const up=()=>{down=false};fxc.addEventListener('pointerup',up);fxc.addEventListe
 setInterval(()=>{if(down&&!isGround(S.type)&&S.type!=='text')launch(S.type,px,py,{})},170);
 
 $('#bSettings').onclick=()=>{document.body.classList.remove('ctrl');$('#panel').classList.toggle('open')};
-$('#bMute').onclick=()=>{Snd.init();set('sound',!S.sound);toast(S.sound?'Sound on':'Muted');if(curTab==='Sound')buildPanel()};
-$('#bAuto').onclick=()=>{S.autoShow=!S.autoShow;save();syncAuto();toast(S.autoShow?'Auto show on':'Auto show off');if(curTab==='Show')buildPanel()};
+$('#bMute').onclick=()=>{Snd.init();set('sound',!S.sound);toast(_t(S.sound?'Sound on':'Muted'));if(curTab==='Sound')buildPanel()};
+$('#bAuto').onclick=()=>{S.autoShow=!S.autoShow;save();syncAuto();toast(_t(S.autoShow?'Auto show on':'Auto show off'));if(curTab==='Show')buildPanel()};
 $('#bFinale').onclick=finale;
 $('#bText').onclick=()=>gate('sky',700)&&actions.sky();
 $('#bVolley').onclick=()=>gate('volley',500)&&volley(isGround(S.type)||S.type==='text'||S.type==='bomb'?'random':S.type,5);
-$('#bClear').onclick=()=>{P.length=R.length=FL.length=EM.length=TQ.length=PR.length=0;pctx.clearRect(0,0,W,H);SM.length=0;showBusy=cdBusy=false;$('#cd').className='';ctx.clearRect(0,0,W,H)};
+function clearSky(){P.length=R.length=FL.length=EM.length=TQ.length=PR.length=0;pctx.clearRect(0,0,W,H);SM.length=0;showBusy=cdBusy=false;$('#cd').className='';ctx.clearRect(0,0,W,H);closeCkCard();Hap.buzz([10])}
+$('#bClear').onclick=clearSky;
+$('#clearBtn').onclick=()=>{clearSky();toast(_t('Sky cleared'))};
 $('#bControls').onclick=()=>{$('#panel').classList.remove('open');document.body.classList.toggle('ctrl')};
 document.querySelectorAll('#dtabs [data-t]').forEach(b=>b.onclick=()=>{document.querySelectorAll('#dtabs [data-t]').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('.dpane').forEach(q=>q.classList.toggle('on',q.id==='p-'+b.dataset.t))});
 $('#dClose').onclick=()=>document.body.classList.remove('ctrl');
@@ -1830,7 +1968,7 @@ const wishText=()=>cleanMsg($('#wish').value)||cleanMsg(S.skyText)||'Happy Diwal
 $('#bWrite').onclick=()=>gate('write',700)&&launch('text',W/2,H*.32,{pal:S.pal==='auto'?'rainbow':S.pal,sc:1,msg:wishText()});
 $('#wish').addEventListener('keydown',e=>{if(e.key==='Enter')$('#bWrite').click()});
 $('#bShare').onclick=()=>gate('share',600)&&shareGreeting();
-function fullscreen(){const d=document,de=d.documentElement,warn=()=>toast('Full screen is blocked here – use your browser’s full-screen option');
+function fullscreen(){const d=document,de=d.documentElement,warn=()=>toast(_t('Full screen is blocked here – use your browser’s full-screen option'));
   if(d.fullscreenElement){d.exitFullscreen();return}
   if(!de.requestFullscreen){warn();return}
   try{de.requestFullscreen().catch(warn)}catch(e){warn()}}
@@ -1840,14 +1978,14 @@ $('#bHide').onclick=()=>hideUI(true);$('#showUI').onclick=()=>hideUI(false);
 $('#bShot').onclick=()=>{
   const c=document.createElement('canvas');c.width=sky.width;c.height=sky.height;const t=c.getContext('2d');
   t.drawImage(sky,0,0);t.drawImage(fxc,0,0);t.drawImage(cityc,0,0);
-  const a=document.createElement('a');a.download='fireworks.png';a.href=c.toDataURL('image/png');a.click();toast('📷 Saved screenshot');
+  const a=document.createElement('a');a.download='fireworks.png';a.href=c.toDataURL('image/png');a.click();toast(_t('📷 Saved screenshot'));
 };
 addEventListener('keydown',e=>{
   if(/INPUT|SELECT|TEXTAREA/.test(e.target.tagName)&&e.key!=='Escape')return;
   const k=e.key.toLowerCase(),keys=Object.keys(TYPES);
   if(k===' '){e.preventDefault();launch(S.type,rnd(W*.1,W*.9),rnd(H*.15,H*.5))}
-  else if(k>='1'&&k<='9'){S.type=keys[+k-1];save();buildDock();toast(TYPES[S.type].n)}
-  else if(k==='0'){S.type='random';save();buildDock();toast('Random')}
+  else if(k>='1'&&k<='9'){S.type=keys[+k-1];save();buildDock();toast(_t(TYPES[S.type].n))}
+  else if(k==='0'){S.type='random';save();buildDock();toast(_t('Random'))}
   else if(k==='f')fullscreen();
   else if(k==='m')$('#bMute').click();
   else if(k==='h')hideUI(!document.body.classList.contains('hideui'));
@@ -1865,17 +2003,18 @@ function go(sound){
   S.sound=sound;save();Snd.init();Snd.apply();syncMute();
   $('#start').classList.add('gone');
   const g=readGreeting();
-  if(g){showBusy=true;later(900,()=>{launch('text',W/2,H*.34,{pal:g.p,sc:1.15,msg:g.m});toast('💌 A greeting for you!')});later(9000,()=>{showBusy=false})}
+  if(g){showBusy=true;later(900,()=>{launch('text',W/2,H*.34,{pal:g.p,sc:1.15,msg:g.m});toast(_t('💌 A greeting for you!'))});later(9000,()=>{showBusy=false})}
   else if(sound){Snd.bell(.9,0);later(500,()=>launch('chrys',W/2,H*.3,{pal:'gold',sc:1.2}))}
 }
 $('#goSound').onclick=()=>go(true);$('#goMute').onclick=()=>go(false);
 document.addEventListener('visibilitychange',()=>{if(Snd.ac){document.hidden?Snd.ac.suspend():(S.sound&&Snd.ac.resume())}});
 
 sanitizeSettings();resize();applyQ();applyMisc();buildPanel();buildDock();syncMute();syncAuto();
-{const g=readGreeting();if(g)$('#greet').textContent='💌 You have a greeting: “'+g.m+'”'}
+let greetNow=readGreeting();if(greetNow)$('#greet').textContent=_t('💌 You have a greeting: ')+'“'+greetNow.m+'”';
+applyLang();
 document.addEventListener('pointerdown',e=>{if(e.target.closest&&e.target.closest('button,select'))Snd.click()},true);
 requestAnimationFrame(t=>{last=t;frame(t)});
-window.Firework={PR,TQ,CKM,launch,explode,finale,runShow,countdown,todaysShow,grandShow,readGreeting,S,Snd,P,R,volley,TYPES,actions,get Q(){return Q},get level(){return qLevel}};
+window.Firework={PR,TQ,CKM,BANG,HAP,Hap,launch,explode,finale,runShow,countdown,todaysShow,grandShow,readGreeting,S,Snd,P,R,volley,TYPES,actions,get Q(){return Q},get level(){return qLevel}};
 })();
 </script>
 </body>

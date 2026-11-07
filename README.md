@@ -60,3 +60,10 @@ Picking a shell in Controls → Shells now fires it immediately where you can se
 
 ## v12 – unobtrusive cracker info
 Firing a cracker no longer pops up a text card over the sky. A small half-transparent **ⓘ** appears in the top-left corner; tap it to read the cracker's local names, look and effect, tap again (or the sky) to close.
+
+## v13 – every cracker feels different, languages, clear icon
+- **Sound variety:** each bomb has its own voice (kuruvi tick, bijli crack, laxmi pop, chocolate thud, atom boom with 3 echoes, maroons deep doom with 4 echoes + long rumble, hydro splash, bullet whip, chinese double-crack, 555 triple). Fountains hiss or roar by size, spinners whirr at a pitch that matches their size, ladi bangs change pitch with cracker size. Heavy bombs get rolling stereo echoes.
+- **Haptics:** a different vibration pattern per cracker (Android; Settings → Sound → Haptic feedback + strength slider). iPhones do not allow web vibration.
+- **Look:** hydro = water splash, maroons/atom = dust + big shockwave and shake, chocolate = brown debris, chinese = red/gold sparks.
+- **Languages:** English · हिन्दी · मराठी — pick on the welcome screen or in Settings → Show. Everything is translated (menus, settings, shells, all 64 cracker names and info cards, messages); the language is remembered and defaults to your browser language.
+- **Clear icon:** small eraser button at the top-left clears the whole sky.
